@@ -113,3 +113,80 @@ py -m streamlit run app.py
 
 Bradley Hankins  
 Operations & Revenue Leader | Technology & AI Workflow Integration
+
+## Case Study
+
+### Problem
+
+Small and mid-sized businesses often hire from scattered notes, informal interviews, and inconsistent evaluation processes. This can make it difficult for hiring managers to compare candidates fairly, identify risks, ask better follow-up questions, and prepare a clear onboarding plan.
+
+Common issues include:
+
+- Inconsistent candidate evaluation
+- Interview notes that are hard to compare
+- Unclear hiring recommendations
+- Missed red flags
+- Lack of structured follow-up questions
+- No repeatable onboarding plan
+- Hiring decisions based too heavily on memory or gut feel
+
+### Solution
+
+RecruitPilot AI was built as a lightweight AI-assisted candidate screening workflow tool.
+
+The app allows a hiring manager to enter candidate information and interview notes, then generates:
+
+- Candidate fit score
+- Risk level
+- Hiring recommendation
+- Role success profile
+- Green flags
+- Red flags
+- Follow-up interview questions
+- Interview scorecard
+- Internal manager note
+- Candidate follow-up email
+- Recommended onboarding plan
+- Downloadable candidate review report
+
+### My Role
+
+I designed and built this project from concept to deployment, including:
+
+- Defining the recruiting workflow problem
+- Designing the candidate input structure
+- Mapping role fit criteria
+- Building the Streamlit app
+- Writing the rules-based AI-style scoring logic
+- Creating candidate risk and recommendation logic
+- Building downloadable Markdown reports
+- Preparing fictional sample scenarios for public portfolio use
+- Publishing the project on GitHub
+- Deploying the live demo
+
+### Business Value
+
+RecruitPilot AI helps small and mid-sized businesses improve hiring consistency and manager documentation.
+
+The tool can help teams:
+
+- Compare candidates more consistently
+- Identify green flags and red flags faster
+- Ask better follow-up interview questions
+- Document hiring decisions clearly
+- Prepare onboarding focus areas earlier
+- Reduce reliance on scattered interview notes
+- Create a repeatable candidate screening process
+
+### Future Improvements
+
+Planned future improvements include:
+
+- OpenAI API integration for dynamic candidate summaries
+- Resume upload and parsing
+- Job description matching
+- PDF report downloads
+- Saved candidate profiles
+- Interview scorecard exports
+- Multi-candidate comparison dashboard
+- Recruiting pipeline analytics
