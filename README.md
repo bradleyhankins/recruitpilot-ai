@@ -17,6 +17,10 @@ It helps hiring managers turn candidate information and interview notes into:
 - Onboarding plans
 - Downloadable candidate review reports
 
+## Live Demo
+
+[Launch RecruitPilot AI](https://recruitpilot-ai.streamlit.app/)
+
 ## Why this project exists
 
 Small and mid-sized businesses often hire from scattered notes, informal interviews, and inconsistent evaluation processes. RecruitPilot AI helps standardize candidate screening so hiring managers can make clearer, more consistent decisions.
