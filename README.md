@@ -2,11 +2,12 @@
 
 RecruitPilot AI is a responsible ATS Lite resume review assistant for small-business and field-sales teams.
 
-It helps hiring managers organize job descriptions and resume text into:
+It helps hiring managers organize job descriptions and resume information into:
 
 - Candidate pipeline stage
 - Resume review priority
 - Resume match signals
+- Job-term coverage
 - Missing or unclear information
 - Suggested follow-up interview questions
 - Manager-ready review summaries
@@ -35,17 +36,19 @@ RecruitPilot AI is designed for:
 - Operations leaders
 - Hiring managers
 
-## Current Version: v2.0
+## Current Version: v2.1
 
-RecruitPilot AI v2.0 is positioned as an ATS Lite resume review and candidate tracking assistant.
+RecruitPilot AI v2.1 is positioned as an ATS Lite resume review and candidate tracking assistant.
 
 It includes:
 
 - Job description input
 - Resume text input
+- Optional `.txt` / `.md` resume upload
 - Candidate pipeline stage tracking
 - Role type selector
 - Resume match signal extraction
+- Job-term coverage calculation
 - Missing or unclear information checklist
 - Review priority labels
 - Follow-up interview questions
@@ -56,12 +59,12 @@ It includes:
 
 ## What it does
 
-The app allows users to paste a job description and resume text, then generates:
+The app allows users to paste a job description and resume text, or upload a plain-text resume file, then generates:
 
 - Review priority
 - Pipeline stage snapshot
 - Count of resume match signals
-- Count of missing or unclear items
+- Job-term coverage percentage
 - Job-related resume signals
 - Missing or unclear job terms
 - Suggested follow-up questions
@@ -92,6 +95,7 @@ Screenshots will be refreshed after all portfolio apps are upgraded.
 - Python
 - Streamlit
 - Rules-based workflow logic
+- Keyword and signal extraction
 - Markdown report export
 - GitHub
 - Streamlit Community Cloud
@@ -133,7 +137,7 @@ Common issues include:
 
 RecruitPilot AI was rebuilt as a responsible ATS Lite resume review assistant.
 
-The app allows a user to paste a job description and resume text, select a role type and pipeline stage, then generate a structured review packet that organizes resume match signals, missing information, interview questions, manager summaries, and candidate communication.
+The app allows a user to paste a job description and resume text, upload a plain-text resume file, select a role type and pipeline stage, then generate a structured review packet that organizes resume match signals, missing information, interview questions, manager summaries, and candidate communication.
 
 ### My Role
 
@@ -144,6 +148,7 @@ I designed and built this project from concept to deployment, including:
 - Designing the resume review workflow
 - Building the Streamlit app
 - Writing rules-based keyword and signal extraction logic
+- Adding upload-friendly resume text support
 - Creating review priority labels
 - Creating manager-ready summaries
 - Creating candidate follow-up email templates
@@ -159,6 +164,7 @@ RecruitPilot AI helps small and mid-sized businesses organize applicant review m
 The tool can help teams:
 
 - Review job descriptions and resumes in one workflow
+- Upload or paste resume text
 - Identify resume signals related to the role
 - Document missing or unclear information
 - Prepare better follow-up interview questions
@@ -171,7 +177,7 @@ The tool can help teams:
 
 Planned future improvements include:
 
-- File upload for resumes
+- PDF/DOCX resume parsing
 - Job description templates
 - Multi-candidate tracking dashboard
 - CSV export for candidate pipeline records
