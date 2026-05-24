@@ -57,80 +57,12 @@ SAMPLE_DATA = {
 }
 
 KEYWORD_LIBRARY = {
-    "Field Sales": [
-        "sales",
-        "prospecting",
-        "follow-up",
-        "crm",
-        "appointment",
-        "customer",
-        "presentation",
-        "closing",
-        "lead",
-        "outbound",
-        "homeowner",
-    ],
-    "Inside Sales": [
-        "sales",
-        "phone",
-        "email",
-        "crm",
-        "lead",
-        "appointment",
-        "follow-up",
-        "customer",
-        "pipeline",
-        "inbound",
-        "outbound",
-    ],
-    "Operations": [
-        "operations",
-        "scheduling",
-        "spreadsheet",
-        "crm",
-        "documentation",
-        "process",
-        "coordination",
-        "customer",
-        "office",
-        "workflow",
-    ],
-    "Customer Success": [
-        "customer",
-        "service",
-        "support",
-        "retention",
-        "follow-up",
-        "communication",
-        "issue",
-        "crm",
-        "experience",
-        "resolution",
-    ],
-    "Project Management": [
-        "project",
-        "schedule",
-        "coordination",
-        "customer",
-        "vendor",
-        "timeline",
-        "documentation",
-        "scope",
-        "quality",
-        "communication",
-    ],
-    "General Business": [
-        "customer",
-        "communication",
-        "organization",
-        "crm",
-        "process",
-        "follow-up",
-        "team",
-        "documentation",
-        "sales",
-        "operations",
-    ],
+    "Field Sales": ["sales", "prospecting", "follow-up", "crm", "appointment", "customer", "presentation", "closing", "lead", "outbound", "homeowner"],
+    "Inside Sales": ["sales", "phone", "email", "crm", "lead", "appointment", "follow-up", "customer", "pipeline", "inbound", "outbound"],
+    "Operations": ["operations", "scheduling", "spreadsheet", "crm", "documentation", "process", "coordination", "customer", "office", "workflow"],
+    "Customer Success": ["customer", "service", "support", "retention", "follow-up", "communication", "issue", "crm", "experience", "resolution"],
+    "Project Management": ["project", "schedule", "coordination", "customer", "vendor", "timeline", "documentation", "scope", "quality", "communication"],
+    "General Business": ["customer", "communication", "organization", "crm", "process", "follow-up", "team", "documentation", "sales", "operations"],
 }
 
 RESPONSIBLE_USE_NOTE = (
@@ -144,189 +76,33 @@ RESPONSIBLE_USE_NOTE = (
 
 CUSTOM_CSS = """
 <style>
-.block-container {
-    max-width: 1180px;
-    padding-top: 1.35rem;
-    padding-bottom: 3rem;
-}
-
-[data-testid="stSidebar"] {
-    background: #111827;
-}
-
-[data-testid="stSidebar"] h1,
-[data-testid="stSidebar"] h2,
-[data-testid="stSidebar"] h3,
-[data-testid="stSidebar"] p,
-[data-testid="stSidebar"] span,
-[data-testid="stSidebar"] label,
-[data-testid="stSidebar"] li,
-[data-testid="stSidebar"] ul,
-[data-testid="stSidebar"] ol {
-    color: #f9fafb !important;
-}
-
-[data-testid="stSidebar"] li::marker {
-    color: #93c5fd !important;
-}
-
-.hero {
-    padding: 1.9rem 2rem;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #111827 0%, #1f2937 52%, #334155 100%);
-    color: #ffffff;
-    box-shadow: 0 18px 36px rgba(17, 24, 39, .18);
-    margin-bottom: 1rem;
-}
-
-.eyebrow {
-    text-transform: uppercase;
-    letter-spacing: .13em;
-    font-size: .75rem;
-    font-weight: 800;
-    color: #93c5fd;
-    margin-bottom: .65rem;
-}
-
-.hero-title {
-    font-size: 2.25rem;
-    line-height: 1.08;
-    font-weight: 850;
-    margin-bottom: .65rem;
-}
-
-.hero-subtitle {
-    font-size: 1.02rem;
-    line-height: 1.62;
-    color: #e5e7eb;
-    max-width: 900px;
-}
-
-.hero-pills span {
-    display: inline-block;
-    padding: .35rem .65rem;
-    margin: .75rem .28rem 0 0;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, .10);
-    border: 1px solid rgba(255, 255, 255, .16);
-    font-weight: 700;
-    font-size: .78rem;
-    color: #f8fafc;
-}
-
-.section-title {
-    margin-top: 1.25rem;
-    margin-bottom: .55rem;
-    font-size: 1.4rem;
-    font-weight: 850;
-    color: #111827;
-}
-
-.section-lede {
-    color: #4b5563;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-    max-width: 950px;
-}
-
-.form-group-title {
-    font-size: .9rem;
-    font-weight: 850;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    color: #64748b;
-    margin: .35rem 0 .15rem 0;
-}
-
-.metric-card,
-.output-card,
-.signal-card,
-.warning-card,
-.workflow-card {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 18px;
-    box-shadow: 0 8px 20px rgba(15, 23, 42, .055);
-}
-
-.metric-card {
-    height: 138px;
-    padding: 1rem;
-    margin-bottom: .75rem;
-}
-
-.metric-label {
-    color: #6b7280;
-    font-size: .78rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    margin-bottom: .5rem;
-}
-
-.metric-value {
-    color: #111827;
-    font-size: 1.35rem;
-    line-height: 1.18;
-    font-weight: 900;
-    overflow-wrap: break-word;
-}
-
-.metric-note {
-    color: #64748b;
-    font-size: .85rem;
-    margin-top: .55rem;
-}
-
-.output-card,
-.signal-card,
-.warning-card,
-.workflow-card {
-    padding: 1.15rem;
-    margin-bottom: .8rem;
-}
-
+.block-container { max-width: 1180px; padding-top: 1.35rem; padding-bottom: 3rem; }
+[data-testid="stSidebar"] { background: #111827; }
+[data-testid="stSidebar"] h1,[data-testid="stSidebar"] h2,[data-testid="stSidebar"] h3,[data-testid="stSidebar"] p,[data-testid="stSidebar"] span,[data-testid="stSidebar"] label,[data-testid="stSidebar"] li,[data-testid="stSidebar"] ul,[data-testid="stSidebar"] ol { color: #f9fafb !important; }
+[data-testid="stSidebar"] li::marker { color: #93c5fd !important; }
+.hero { padding: 1.9rem 2rem; border-radius: 20px; background: linear-gradient(135deg, #111827 0%, #1f2937 52%, #334155 100%); color: #ffffff; box-shadow: 0 18px 36px rgba(17, 24, 39, .18); margin-bottom: 1rem; }
+.eyebrow { text-transform: uppercase; letter-spacing: .13em; font-size: .75rem; font-weight: 800; color: #93c5fd; margin-bottom: .65rem; }
+.hero-title { font-size: 2.25rem; line-height: 1.08; font-weight: 850; margin-bottom: .65rem; }
+.hero-subtitle { font-size: 1.02rem; line-height: 1.62; color: #e5e7eb; max-width: 900px; }
+.hero-pills span { display: inline-block; padding: .35rem .65rem; margin: .75rem .28rem 0 0; border-radius: 999px; background: rgba(255, 255, 255, .10); border: 1px solid rgba(255, 255, 255, .16); font-weight: 700; font-size: .78rem; color: #f8fafc; }
+.section-title { margin-top: 1.25rem; margin-bottom: .55rem; font-size: 1.4rem; font-weight: 850; color: #111827; }
+.section-lede { color: #4b5563; line-height: 1.6; margin-bottom: 1rem; max-width: 950px; }
+.form-group-title { font-size: .9rem; font-weight: 850; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: .35rem 0 .15rem 0; }
+.metric-card,.output-card,.signal-card,.warning-card,.workflow-card { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 18px; box-shadow: 0 8px 20px rgba(15, 23, 42, .055); }
+.metric-card { height: 138px; padding: 1rem; margin-bottom: .75rem; }
+.metric-label { color: #6b7280; font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .5rem; }
+.metric-value { color: #111827; font-size: 1.35rem; line-height: 1.18; font-weight: 900; overflow-wrap: break-word; }
+.metric-note { color: #64748b; font-size: .85rem; margin-top: .55rem; }
+.output-card,.signal-card,.warning-card,.workflow-card { padding: 1.15rem; margin-bottom: .8rem; }
 .output-card { border-left: 5px solid #111827; }
 .signal-card { border-left: 5px solid #059669; }
 .warning-card { border-left: 5px solid #f59e0b; }
 .workflow-card { border-left: 5px solid #1d4ed8; }
-
-.output-card h3,
-.signal-card h3,
-.warning-card h3,
-.workflow-card h3 {
-    font-size: 1.05rem;
-    font-weight: 850;
-    color: #111827;
-    margin-bottom: .4rem;
-}
-
-.output-card p,
-.signal-card p,
-.warning-card p,
-.workflow-card p,
-.output-card li,
-.signal-card li,
-.warning-card li,
-.workflow-card li {
-    color: #4b5563;
-    line-height: 1.52;
-    font-size: .93rem;
-}
-
-.note-box {
-    padding: .9rem 1rem;
-    border-radius: 14px;
-    background: #f8fafc;
-    color: #334155;
-    border: 1px solid #e2e8f0;
-    font-weight: 650;
-    margin: .9rem 0;
-    font-size: .92rem;
-}
+.output-card h3,.signal-card h3,.warning-card h3,.workflow-card h3 { font-size: 1.05rem; font-weight: 850; color: #111827; margin-bottom: .4rem; }
+.output-card p,.signal-card p,.warning-card p,.workflow-card p,.output-card li,.signal-card li,.warning-card li,.workflow-card li { color: #4b5563; line-height: 1.52; font-size: .93rem; }
+.note-box { padding: .9rem 1rem; border-radius: 14px; background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; font-weight: 650; margin: .9rem 0; font-size: .92rem; }
 </style>
 """
-
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
@@ -335,47 +111,25 @@ st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
 
 def section_title(title: str, lede: str | None = None) -> None:
-    """Render a consistent section title."""
     st.markdown(f'<div class="section-title">{title}</div>', unsafe_allow_html=True)
     if lede:
         st.markdown(f'<div class="section-lede">{lede}</div>', unsafe_allow_html=True)
 
 
 def form_group(title: str) -> None:
-    """Render a form-group label."""
     st.markdown(f'<div class="form-group-title">{title}</div>', unsafe_allow_html=True)
 
 
 def metric_card(label: str, value: str, note: str | None = None) -> None:
-    """Render a metric card."""
     note_html = f'<div class="metric-note">{note}</div>' if note else ""
-    st.markdown(
-        f"""
-        <div class="metric-card">
-            <div class="metric-label">{label}</div>
-            <div class="metric-value">{value}</div>
-            {note_html}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.markdown(f'<div class="metric-card"><div class="metric-label">{label}</div><div class="metric-value">{value}</div>{note_html}</div>', unsafe_allow_html=True)
 
 
 def html_card(title: str, body: str, css_class: str = "output-card") -> None:
-    """Render a reusable HTML card."""
-    st.markdown(
-        f"""
-        <div class="{css_class}">
-            <h3>{title}</h3>
-            {body}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.markdown(f'<div class="{css_class}"><h3>{title}</h3>{body}</div>', unsafe_allow_html=True)
 
 
 def html_list(items: list[str], empty_message: str) -> str:
-    """Render an HTML list with a fallback item."""
     visible_items = items or [empty_message]
     return "<ul>" + "".join(f"<li>{item}</li>" for item in visible_items) + "</ul>"
 
@@ -385,15 +139,12 @@ def html_list(items: list[str], empty_message: str) -> str:
 
 
 def tokenize(text: str) -> list[str]:
-    """Convert text into normalized keyword-like tokens."""
     return re.findall(r"[a-zA-Z][a-zA-Z\-]+", text.lower())
 
 
 def decode_uploaded_text(uploaded_file) -> str:
-    """Decode an uploaded text or markdown file."""
     if uploaded_file is None:
         return ""
-
     try:
         return uploaded_file.getvalue().decode("utf-8")
     except UnicodeDecodeError:
@@ -401,48 +152,26 @@ def decode_uploaded_text(uploaded_file) -> str:
 
 
 def extract_job_terms(job_description: str, role_type: str) -> list[str]:
-    """Extract role-library and job-description terms for comparison."""
     tokens = tokenize(job_description)
     counts = Counter(tokens)
     library_terms = KEYWORD_LIBRARY.get(role_type, KEYWORD_LIBRARY["General Business"])
-
-    role_terms_found = [
-        term for term in library_terms
-        if term.lower() in job_description.lower()
-    ]
-    common_job_terms = [
-        word for word, _ in counts.most_common(24)
-        if len(word) > 4 and word not in {"looking", "seeking", "strong", "experience"}
-    ]
-
+    role_terms_found = [term for term in library_terms if term.lower() in job_description.lower()]
+    common_job_terms = [word for word, _ in counts.most_common(24) if len(word) > 4 and word not in {"looking", "seeking", "strong", "experience"}]
     return list(dict.fromkeys(role_terms_found + common_job_terms))[:18]
 
 
 def review_resume(job_description: str, resume_text: str, role_type: str) -> dict:
-    """Compare resume text to role keywords and job-description terms."""
     role_terms = KEYWORD_LIBRARY.get(role_type, KEYWORD_LIBRARY["General Business"])
     job_terms = extract_job_terms(job_description, role_type)
     resume_lower = resume_text.lower()
-
-    matched_role_terms = [
-        term for term in role_terms
-        if term.lower() in resume_lower
-    ]
-    matched_job_terms = [
-        term for term in job_terms
-        if term.lower() in resume_lower
-    ]
-    missing_job_terms = [
-        term for term in job_terms
-        if term.lower() not in resume_lower
-    ]
-
+    matched_role_terms = [term for term in role_terms if term.lower() in resume_lower]
+    matched_job_terms = [term for term in job_terms if term.lower() in resume_lower]
+    missing_job_terms = [term for term in job_terms if term.lower() not in resume_lower]
     unique_matches = list(dict.fromkeys(matched_role_terms + matched_job_terms))
     signal_count = len(unique_matches)
     missing_count = len(missing_job_terms)
     total_terms = max(len(job_terms), 1)
     coverage = round((len(matched_job_terms) / total_terms) * 100)
-
     if not resume_text.strip():
         priority = "Manual Review Recommended"
         priority_note = "Resume text was not provided or could not be reviewed."
@@ -455,53 +184,40 @@ def review_resume(job_description: str, resume_text: str, role_type: str) -> dic
     else:
         priority = "Needs More Information"
         priority_note = "Resume text has limited obvious overlap with the job description. Human review should clarify context."
-
-    return {
-        "priority": priority,
-        "priority_note": priority_note,
-        "matched_terms": unique_matches[:12],
-        "missing_terms": missing_job_terms[:12],
-        "job_terms": job_terms,
-        "signal_count": signal_count,
-        "missing_count": missing_count,
-        "coverage": coverage,
-    }
+    return {"priority": priority, "priority_note": priority_note, "matched_terms": unique_matches[:12], "missing_terms": missing_job_terms[:12], "job_terms": job_terms, "signal_count": signal_count, "missing_count": missing_count, "coverage": coverage}
 
 
 def followup_questions(role_title: str, signals: list[str], missing_terms: list[str]) -> list[str]:
-    """Generate interview follow-up questions from signals and missing terms."""
-    questions = [
-        f"What interests you most about the {role_title} role?",
-        "Walk me through the experience on your resume that best connects to this role.",
-        "What type of work environment helps you perform at your best?",
-        "How do you stay organized with tasks, notes, and follow-up?",
-    ]
-
+    questions = [f"What interests you most about the {role_title} role?", "Walk me through the experience on your resume that best connects to this role.", "What type of work environment helps you perform at your best?", "How do you stay organized with tasks, notes, and follow-up?"]
     for term in missing_terms[:4]:
-        questions.append(
-            f"Can you share any experience related to {term} that may not be clear on your resume?"
-        )
-
+        questions.append(f"Can you share any experience related to {term} that may not be clear on your resume?")
     if signals:
-        questions.append(
-            f"Your resume mentions {signals[0]}. Can you give a specific example of how you used that in a previous role?"
-        )
-
+        questions.append(f"Your resume mentions {signals[0]}. Can you give a specific example of how you used that in a previous role?")
     return questions[:8]
+
+
+def next_human_review_step(review: dict) -> str:
+    if review["priority"] == "High Review Priority":
+        return "Schedule a human phone screen to clarify the strongest resume signals."
+    if review["priority"] == "Standard Review Priority":
+        return "Review missing information, then decide whether a phone screen is warranted."
+    if review["priority"] == "Needs More Information":
+        return "Request clarification or additional resume detail before scheduling next steps."
+    return "Manually review the resume text and job requirements before taking next action."
 
 # -----------------------------------------------------------------------------
 # Output generation
 # -----------------------------------------------------------------------------
 
 
-def manager_summary(candidate_name: str, role_title: str, pipeline_stage: str, review: dict) -> str:
-    """Create a manager-ready review summary."""
+def manager_summary(candidate_name: str, role_title: str, pipeline_stage: str, review: dict, next_step: str) -> str:
     name = candidate_name or "Candidate"
     return f"""{name} is currently in the {pipeline_stage} stage for the {role_title} role.
 
 Review Priority: {review['priority']}
 Review Signal Count: {review['signal_count']}
 Job-Term Coverage: {review['coverage']}%
+Next Human Review Step: {next_step}
 Summary: {review['priority_note']}
 
 {RESPONSIBLE_USE_NOTE}
@@ -509,7 +225,6 @@ Summary: {review['priority_note']}
 
 
 def candidate_email(candidate_name: str, role_title: str) -> tuple[str, str]:
-    """Create a neutral candidate follow-up email."""
     name = candidate_name or "there"
     subject = f"Following Up on the {role_title} Opportunity"
     body = f"""Hi {name},
@@ -523,27 +238,20 @@ Hiring Team"""
     return subject, body
 
 
-def build_review_packet(
-    candidate_name: str,
-    role_title: str,
-    role_type: str,
-    pipeline_stage: str,
-    job_description: str,
-    resume_text: str,
-    review: dict,
-    questions: list[str],
-    summary: str,
-    subject: str,
-    email: str,
-) -> str:
-    """Generate the downloadable Markdown resume review packet."""
+def csv_escape(value: str) -> str:
+    return '"' + str(value).replace('"', '""') + '"'
+
+
+def build_tracker_csv(candidate_name: str, role_title: str, pipeline_stage: str, review: dict, next_step: str) -> str:
+    headers = ["Candidate Name", "Role", "Stage", "Review Priority", "Match Signals", "Missing Items", "Job-Term Coverage", "Next Human Review Step"]
+    row = [candidate_name or "N/A", role_title, pipeline_stage, review["priority"], "; ".join(review["matched_terms"]), "; ".join(review["missing_terms"]), f"{review['coverage']}%", next_step]
+    return ",".join(headers) + "\n" + ",".join(csv_escape(item) for item in row)
+
+
+def build_review_packet(candidate_name: str, role_title: str, role_type: str, pipeline_stage: str, job_description: str, resume_text: str, review: dict, questions: list[str], summary: str, subject: str, email: str, next_step: str) -> str:
     signal_lines = "\n".join(f"- {item}" for item in review["matched_terms"]) or "- No clear match signals found from the provided text."
     missing_lines = "\n".join(f"- {item}" for item in review["missing_terms"]) or "- No major missing terms identified from the provided job description."
-    question_lines = "\n".join(
-        f"{index + 1}. {question}"
-        for index, question in enumerate(questions)
-    )
-
+    question_lines = "\n".join(f"{index + 1}. {question}" for index, question in enumerate(questions))
     return f"""# RecruitPilot AI Resume Review Packet
 
 ## Candidate Tracking
@@ -554,6 +262,7 @@ Pipeline Stage: {pipeline_stage}
 Review Priority: {review['priority']}
 Review Signal Count: {review['signal_count']}
 Job-Term Coverage: {review['coverage']}%
+Next Human Review Step: {next_step}
 
 ## Responsible Use Note
 {RESPONSIBLE_USE_NOTE}
@@ -592,175 +301,85 @@ Generated by RecruitPilot AI.
 
 with st.sidebar:
     st.title("RecruitPilot AI")
-    st.caption("Version 2.1")
-    st.markdown(
-        "ATS Lite resume review assistant for organizing applicant information before human review."
-    )
+    st.caption("Version 2.2")
+    st.markdown("ATS Lite resume review assistant for organizing applicant information before human review.")
     st.divider()
     st.markdown("### Outputs")
-    st.markdown(
-        """
-        - Pipeline stage
-        - Review priority
-        - Resume match signals
-        - Missing information
-        - Follow-up questions
-        - Manager summary
-        - Candidate email
-        - Downloadable packet
-        """
-    )
+    st.markdown("- Pipeline stage\n- Review priority\n- Resume match signals\n- Missing information\n- Follow-up questions\n- Manager summary\n- Candidate email\n- Downloadable packet")
 
-st.markdown(
-    """
-    <div class="hero">
-        <div class="eyebrow">ATS Lite Resume Review Assistant</div>
-        <div class="hero-title">RecruitPilot AI</div>
-        <div class="hero-subtitle">
-            Organize job descriptions and resume text into review priorities, match signals,
-            missing information, follow-up questions, and manager-ready review packets.
-        </div>
-        <div class="hero-pills">
-            <span>ATS Lite</span><span>Resume Review</span><span>Pipeline Tracking</span><span>Interview Prep</span><span>Streamlit</span>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+st.markdown("""
+<div class="hero"><div class="eyebrow">ATS Lite Resume Review Assistant</div><div class="hero-title">RecruitPilot AI</div><div class="hero-subtitle">Organize job descriptions and resume text into review priorities, match signals, missing information, follow-up questions, and manager-ready review packets.</div><div class="hero-pills"><span>ATS Lite</span><span>Resume Review</span><span>Pipeline Tracking</span><span>Interview Prep</span><span>Streamlit</span></div></div>
+""", unsafe_allow_html=True)
 
-# -----------------------------------------------------------------------------
-# Input workflow
-# -----------------------------------------------------------------------------
-
-section_title(
-    "Resume review builder",
-    "Load a fictional sample, paste a job description and resume text, or upload a plain-text resume file. This tool supports human review and does not make employment decisions.",
-)
-
+section_title("Resume review builder", "Load a fictional sample, paste a job description and resume text, or upload a plain-text resume file. This tool supports human review and does not make employment decisions.")
 scenario_name = st.selectbox("Load Sample Scenario", list(SAMPLE_DATA.keys()))
 scenario = SAMPLE_DATA.get(scenario_name, {})
-
-uploaded_resume = st.file_uploader(
-    "Optional: Upload resume text file (.txt or .md)",
-    type=["txt", "md"],
-)
+uploaded_resume = st.file_uploader("Optional: Upload resume text file (.txt or .md)", type=["txt", "md"])
 uploaded_resume_text = decode_uploaded_text(uploaded_resume)
 
 with st.form("resume_review_form"):
     form_group("Candidate and pipeline details")
     detail_col1, detail_col2, detail_col3 = st.columns(3)
     with detail_col1:
-        candidate_name = st.text_input(
-            "Candidate Name",
-            value=scenario.get("candidate_name", ""),
-            placeholder="Example: Jordan Miller",
-        )
+        candidate_name = st.text_input("Candidate Name", value=scenario.get("candidate_name", ""), placeholder="Example: Jordan Miller")
     with detail_col2:
-        role_title = st.text_input(
-            "Role Title",
-            value=scenario.get("role_title", ""),
-            placeholder="Example: Field Sales Consultant",
-        )
+        role_title = st.text_input("Role Title", value=scenario.get("role_title", ""), placeholder="Example: Field Sales Consultant")
     with detail_col3:
-        pipeline_stage = st.selectbox(
-            "Pipeline Stage",
-            PIPELINE_STAGES,
-            index=PIPELINE_STAGES.index(scenario.get("pipeline_stage", "Resume Review")),
-        )
-
-    role_type = st.selectbox(
-        "Role Type",
-        ROLE_TYPES,
-        index=ROLE_TYPES.index(scenario.get("role_type", "Field Sales")),
-    )
-
+        pipeline_stage = st.selectbox("Pipeline Stage", PIPELINE_STAGES, index=PIPELINE_STAGES.index(scenario.get("pipeline_stage", "Resume Review")))
+    role_type = st.selectbox("Role Type", ROLE_TYPES, index=ROLE_TYPES.index(scenario.get("role_type", "Field Sales")))
     form_group("Job description and resume text")
-    job_description = st.text_area(
-        "Job Description / Role Requirements",
-        value=scenario.get("job_description", ""),
-        height=150,
-    )
-    resume_text = st.text_area(
-        "Resume Text",
-        value=uploaded_resume_text or scenario.get("resume_text", ""),
-        height=180,
-    )
-
+    job_description = st.text_area("Job Description / Role Requirements", value=scenario.get("job_description", ""), height=150)
+    resume_text = st.text_area("Resume Text", value=uploaded_resume_text or scenario.get("resume_text", ""), height=180)
     submitted = st.form_submit_button("Generate Resume Review Packet", use_container_width=True)
 
 if not submitted:
-    st.markdown(
-        '<div class="note-box">Paste a job description and resume text, load a sample scenario, or upload a .txt/.md resume file, then generate the review packet.</div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown('<div class="note-box">Paste a job description and resume text, load a sample scenario, or upload a .txt/.md resume file, then generate the review packet.</div>', unsafe_allow_html=True)
     st.stop()
 
 role_title = role_title or "Open Role"
 review = review_resume(job_description, resume_text, role_type)
 questions = followup_questions(role_title, review["matched_terms"], review["missing_terms"])
-summary = manager_summary(candidate_name, role_title, pipeline_stage, review)
+next_step = next_human_review_step(review)
+summary = manager_summary(candidate_name, role_title, pipeline_stage, review, next_step)
 subject, email = candidate_email(candidate_name, role_title)
-packet = build_review_packet(
-    candidate_name,
-    role_title,
-    role_type,
-    pipeline_stage,
-    job_description,
-    resume_text,
-    review,
-    questions,
-    summary,
-    subject,
-    email,
-)
+packet = build_review_packet(candidate_name, role_title, role_type, pipeline_stage, job_description, resume_text, review, questions, summary, subject, email, next_step)
+tracker_csv = build_tracker_csv(candidate_name, role_title, pipeline_stage, review, next_step)
 
-# -----------------------------------------------------------------------------
-# Output workflow
-# -----------------------------------------------------------------------------
+section_title("Candidate review packet preview")
+preview_col1, preview_col2, preview_col3, preview_col4 = st.columns(4)
+with preview_col1:
+    metric_card("Candidate", candidate_name or "N/A")
+with preview_col2:
+    metric_card("Stage", pipeline_stage)
+with preview_col3:
+    metric_card("Review Priority", review["priority"])
+with preview_col4:
+    metric_card("Job-Term Coverage", f"{review['coverage']}%")
+html_card("Next Human Review Step", f"<p>{next_step}</p>", "workflow-card")
 
 section_title("Review snapshot")
 snapshot_col1, snapshot_col2, snapshot_col3, snapshot_col4 = st.columns(4)
 with snapshot_col1:
-    metric_card("Review Priority", review["priority"])
-with snapshot_col2:
     metric_card("Pipeline Stage", pipeline_stage)
-with snapshot_col3:
+with snapshot_col2:
     metric_card("Match Signals", str(review["signal_count"]))
+with snapshot_col3:
+    metric_card("Missing Items", str(review["missing_count"]))
 with snapshot_col4:
-    metric_card("Job-Term Coverage", f"{review['coverage']}%")
+    metric_card("Role Type", role_type)
 
-html_card(
-    "Responsible Use Note",
-    f"<p>{RESPONSIBLE_USE_NOTE}</p>",
-    "warning-card",
-)
-html_card(
-    "Review Priority Explanation",
-    f"<p>{review['priority_note']}</p>",
-    "output-card",
-)
+html_card("Responsible Use Note", f"<p>{RESPONSIBLE_USE_NOTE}</p>", "warning-card")
+html_card("Review Priority Explanation", f"<p>{review['priority_note']}</p>", "output-card")
 
 section_title("Resume match signals and missing information")
 match_col, missing_col = st.columns(2)
 with match_col:
-    html_card(
-        "Resume Match Signals",
-        html_list(review["matched_terms"], "No clear match signals found from the provided text."),
-        "signal-card",
-    )
+    html_card("Resume Match Signals", html_list(review["matched_terms"], "No clear match signals found from the provided text."), "signal-card")
 with missing_col:
-    html_card(
-        "Missing / Unclear Information",
-        html_list(review["missing_terms"], "No major missing terms identified from the provided job description."),
-        "warning-card",
-    )
+    html_card("Missing / Unclear Information", html_list(review["missing_terms"], "No major missing terms identified from the provided job description."), "warning-card")
 
 section_title("Interview follow-up support")
-html_card(
-    "Suggested Follow-Up Questions",
-    "<ol>" + "".join(f"<li>{question}</li>" for question in questions) + "</ol>",
-    "workflow-card",
-)
+html_card("Suggested Follow-Up Questions", "<ol>" + "".join(f"<li>{question}</li>" for question in questions) + "</ol>", "workflow-card")
 
 section_title("Manager and candidate communication")
 summary_tab, email_tab = st.tabs(["Manager Summary", "Candidate Email"])
@@ -770,16 +389,14 @@ with email_tab:
     st.text_input("Subject Line", subject)
     st.text_area("Candidate email", email, height=220)
 
-section_title("Download review packet")
-st.download_button(
-    "Download Resume Review Packet",
-    data=packet,
-    file_name="recruitpilot-resume-review-packet.md",
-    mime="text/markdown",
-    use_container_width=True,
-)
+section_title("Downloads")
+download_col1, download_col2 = st.columns(2)
+with download_col1:
+    st.download_button("Download Resume Review Packet", data=packet, file_name="recruitpilot-resume-review-packet.md", mime="text/markdown", use_container_width=True)
+with download_col2:
+    st.download_button("Download Candidate Tracker CSV Row", data=tracker_csv, file_name="recruitpilot-candidate-tracker-row.csv", mime="text/csv", use_container_width=True)
 
-st.markdown(
-    '<div class="note-box">Privacy note: Information entered into this app is processed during the active session and is not saved by this app.</div>',
-    unsafe_allow_html=True,
-)
+section_title("What this app demonstrates")
+html_card("Portfolio Skills Shown", "<ul><li>Responsible AI workflow design</li><li>Resume and job description text parsing</li><li>Rules-based review organization</li><li>Manager-ready documentation</li><li>Downloadable Markdown and CSV exports</li></ul>", "signal-card")
+
+st.markdown('<div class="note-box">Privacy note: Information entered into this app is processed during the active session and is not saved by this app.</div>', unsafe_allow_html=True)
