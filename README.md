@@ -36,9 +36,9 @@ RecruitPilot AI is designed for:
 - Operations leaders
 - Hiring managers
 
-## Current Version: v2.1
+## Current Version: v2.2
 
-RecruitPilot AI v2.1 is positioned as an ATS Lite resume review and candidate tracking assistant.
+RecruitPilot AI v2.2 is positioned as an ATS Lite resume review and candidate tracking assistant.
 
 It includes:
 
@@ -51,10 +51,12 @@ It includes:
 - Job-term coverage calculation
 - Missing or unclear information checklist
 - Review priority labels
+- Next human review step
 - Follow-up interview questions
 - Manager-ready review summary
 - Candidate follow-up email template
 - Downloadable Markdown resume review packet
+- Candidate tracker CSV row export
 - Responsible AI use note
 
 ## What it does
@@ -71,6 +73,7 @@ The app allows users to paste a job description and resume text, or upload a pla
 - Manager review summary
 - Candidate follow-up email
 - Downloadable review packet
+- Downloadable candidate tracker CSV row
 
 ## Suggested Test Flow
 
@@ -80,7 +83,7 @@ The app allows users to paste a job description and resume text, or upload a pla
 4. Review the pipeline stage, review priority, match signals, and job-term coverage.
 5. Review missing or unclear information and follow-up interview questions.
 6. Review the manager summary and candidate email.
-7. Download the resume review packet.
+7. Download the resume review packet and candidate tracker CSV row.
 8. Optionally test the `.txt` or `.md` resume upload workflow.
 
 ## Responsible Use
@@ -99,7 +102,9 @@ It should not be used as the sole basis for:
 
 ## Screenshots
 
-Screenshots will be refreshed after all portfolio apps are upgraded and visually verified.
+### Review Workflow and Export Preview
+
+![RecruitPilot AI Review Workflow](screenshots/review-workflow.svg)
 
 ## Tech Stack
 
@@ -108,6 +113,7 @@ Screenshots will be refreshed after all portfolio apps are upgraded and visually
 - Rules-based workflow logic
 - Keyword and signal extraction
 - Markdown report export
+- CSV export
 - GitHub
 - Streamlit Community Cloud
 
