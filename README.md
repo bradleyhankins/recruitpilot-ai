@@ -1,6 +1,6 @@
 # RecruitPilot AI
 
-RecruitPilot AI is a responsible ATS Lite resume review assistant for small-business and field-sales teams.
+RecruitPilot AI is a responsible, AI-enhanced ATS Lite resume review assistant for small-business and field-sales teams.
 
 It helps hiring managers organize job descriptions and resume information into:
 
@@ -9,9 +9,9 @@ It helps hiring managers organize job descriptions and resume information into:
 - Resume match signals
 - Job-term coverage
 - Missing or unclear information
-- Suggested follow-up interview questions
-- Manager-ready review summaries
-- Candidate follow-up emails
+- AI-enhanced follow-up interview questions with rules-based fallback
+- AI-enhanced manager-ready review summaries with rules-based fallback
+- AI-enhanced candidate follow-up emails with rules-based fallback
 - Downloadable resume review packets
 
 RecruitPilot AI is designed to support human review. It should not be used as the sole basis for selection, rejection, compensation, or employment decisions.
@@ -20,71 +20,16 @@ RecruitPilot AI is designed to support human review. It should not be used as th
 
 [Launch RecruitPilot AI](https://recruitpilot-ai.streamlit.app/)
 
-## Why this project exists
+## Current Version: v2.3
 
-Small and mid-sized businesses often review applicants from scattered notes, pasted resumes, job descriptions, and informal conversations. RecruitPilot AI helps organize applicant information into a cleaner review packet so hiring managers can prepare better questions and document next steps more consistently.
+RecruitPilot AI combines a rules-based applicant review organizer with embedded AI-enhanced interview preparation support.
 
-## Who this helps
+The app is designed to work in two layers:
 
-RecruitPilot AI is designed for:
+1. **Rules-based core:** extracts job-related terms, identifies resume match signals, highlights missing or unclear information, and creates a structured human-review packet.
+2. **Embedded AI layer:** when an OpenAI token is available, the app quietly improves the manager summary, follow-up questions, and candidate email while preserving responsible-use guardrails.
 
-- Small business owners
-- Sales managers
-- Field-sales teams
-- Home-service companies
-- Recruiting coordinators
-- Operations leaders
-- Hiring managers
-
-## Current Version: v2.2
-
-RecruitPilot AI v2.2 is positioned as an ATS Lite resume review and candidate tracking assistant.
-
-It includes:
-
-- Job description input
-- Resume text input
-- Optional `.txt` / `.md` resume upload
-- Candidate pipeline stage tracking
-- Role type selector
-- Resume match signal extraction
-- Job-term coverage calculation
-- Missing or unclear information checklist
-- Review priority labels
-- Next human review step
-- Follow-up interview questions
-- Manager-ready review summary
-- Candidate follow-up email template
-- Downloadable Markdown resume review packet
-- Candidate tracker CSV row export
-- Responsible AI use note
-
-## What it does
-
-The app allows users to paste a job description and resume text, or upload a plain-text resume file, then generates:
-
-- Review priority
-- Pipeline stage snapshot
-- Count of resume match signals
-- Job-term coverage percentage
-- Job-related resume signals
-- Missing or unclear job terms
-- Suggested follow-up questions
-- Manager review summary
-- Candidate follow-up email
-- Downloadable review packet
-- Downloadable candidate tracker CSV row
-
-## Suggested Test Flow
-
-1. Launch the live demo.
-2. Load the “Field Sales Resume Review” sample scenario.
-3. Generate the resume review packet.
-4. Review the pipeline stage, review priority, match signals, and job-term coverage.
-5. Review missing or unclear information and follow-up interview questions.
-6. Review the manager summary and candidate email.
-7. Download the resume review packet and candidate tracker CSV row.
-8. Optionally test the `.txt` or `.md` resume upload workflow.
+If the AI call fails or an API key is unavailable, the app silently falls back to the rules-based review packet. The user experience stays the same.
 
 ## Responsible Use
 
@@ -100,6 +45,52 @@ It should not be used as the sole basis for:
 - Employment eligibility decisions
 - Final hiring recommendations
 
+## Why this project exists
+
+Small and mid-sized businesses often review applicants from scattered notes, pasted resumes, job descriptions, and informal conversations. RecruitPilot AI helps organize applicant information into a cleaner review packet so hiring managers can prepare better questions and document next steps more consistently.
+
+## Workflow Outputs
+
+- Job description input
+- Resume text input
+- Optional `.txt` / `.md` resume upload
+- Candidate pipeline stage tracking
+- Role type selector
+- Resume match signal extraction
+- Job-term coverage calculation
+- Missing or unclear information checklist
+- Review priority labels
+- Next human review step
+- AI-enhanced follow-up interview questions with rules-based fallback
+- AI-enhanced manager-ready review summary with rules-based fallback
+- AI-enhanced candidate follow-up email with rules-based fallback
+- Downloadable Markdown resume review packet
+- Candidate tracker CSV row export
+
+## Export Strategy
+
+Current exports:
+
+- Markdown resume review packet (`.md`) for GitHub-friendly and developer-friendly documentation
+- Candidate tracker CSV row for applicant tracking workflows
+
+Planned next upgrade:
+
+- PDF resume review packet for a more user-friendly hiring manager deliverable
+
+The markdown export is useful for transparency and version control, but PDF is the better format for non-technical users.
+
+## Suggested Test Flow
+
+1. Launch the live demo.
+2. Load the “Field Sales Resume Review” sample scenario.
+3. Generate the resume review packet.
+4. Review the pipeline stage, review priority, match signals, and job-term coverage.
+5. Review missing or unclear information and AI-enhanced follow-up interview questions.
+6. Review the manager summary and candidate email.
+7. Download the resume review packet and candidate tracker CSV row.
+8. Optionally test the `.txt` or `.md` resume upload workflow.
+
 ## Screenshots
 
 ### Review Workflow and Export Preview
@@ -110,7 +101,10 @@ It should not be used as the sole basis for:
 
 - Python
 - Streamlit
-- Rules-based workflow logic
+- OpenAI API integration
+- Responsible AI workflow design
+- Rules-based review organization
+- Silent AI fallback pattern
 - Keyword and signal extraction
 - Markdown report export
 - CSV export
@@ -124,15 +118,19 @@ py -m pip install -r requirements.txt
 py -m streamlit run app.py
 ```
 
+## Environment Variables
+
+To enable embedded AI output:
+
+```bash
+OPENAI_TOKEN=your_api_key_here
+```
+
+The app still works without this token by using the rules-based fallback.
+
 ## Public Demo Note
 
 All sample data, names, companies, and scenarios used in this project are fictional and created for public portfolio demonstration purposes.
-
-## Portfolio Purpose
-
-This project was built as part of Bradley Hankins' AI operations and workflow automation portfolio.
-
-RecruitPilot AI demonstrates how practical AI-assisted tools can help small and mid-sized businesses organize resume review, applicant tracking context, interview preparation, manager documentation, and candidate communication while keeping humans responsible for employment decisions.
 
 ## Case Study
 
@@ -140,67 +138,13 @@ RecruitPilot AI demonstrates how practical AI-assisted tools can help small and 
 
 Small and mid-sized businesses often review applicants using scattered notes, resumes, job descriptions, and informal interview impressions. This can make it difficult to identify relevant resume signals, spot missing information, prepare follow-up questions, and document the review process consistently.
 
-Common issues include:
-
-- Resume review notes scattered across systems
-- Job requirements not clearly compared against resume text
-- Missing information not documented before interviews
-- Follow-up questions created from memory instead of a structured process
-- Candidate communication written manually each time
-- Little consistency in applicant review packets
-
 ### Solution
 
-RecruitPilot AI was rebuilt as a responsible ATS Lite resume review assistant.
-
-The app allows a user to paste a job description and resume text, upload a plain-text resume file, select a role type and pipeline stage, then generate a structured review packet that organizes resume match signals, missing information, interview questions, manager summaries, and candidate communication.
-
-### My Role
-
-I designed and built this project from concept to deployment, including:
-
-- Defining the recruiting workflow problem
-- Reframing the app for responsible human review
-- Designing the resume review workflow
-- Building the Streamlit app
-- Writing rules-based keyword and signal extraction logic
-- Adding upload-friendly resume text support
-- Creating review priority labels
-- Creating manager-ready summaries
-- Creating candidate follow-up email templates
-- Building downloadable Markdown review packets
-- Preparing fictional sample scenarios for public portfolio use
-- Publishing the project on GitHub
-- Deploying the live demo
+RecruitPilot AI organizes job descriptions and resume text into a structured review packet that supports human review. The embedded AI layer improves interview preparation, manager summaries, and candidate communication while preserving strict responsible-use boundaries.
 
 ### Business Value
 
 RecruitPilot AI helps small and mid-sized businesses organize applicant review more consistently without replacing human judgment.
-
-The tool can help teams:
-
-- Review job descriptions and resumes in one workflow
-- Upload or paste resume text
-- Identify resume signals related to the role
-- Document missing or unclear information
-- Prepare better follow-up interview questions
-- Create manager-ready review summaries
-- Standardize candidate communication
-- Produce downloadable review documentation
-- Improve applicant tracking discipline
-
-### Future Improvements
-
-Planned future improvements include:
-
-- PDF/DOCX resume parsing
-- Job description templates
-- Multi-candidate tracking dashboard
-- CSV export for candidate pipeline records
-- PDF report downloads
-- Optional OpenAI API integration for dynamic summaries
-- Interview scorecard exports
-- Recruiting pipeline analytics
 
 ## Built By
 
