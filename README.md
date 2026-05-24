@@ -72,6 +72,17 @@ The app allows users to paste a job description and resume text, or upload a pla
 - Candidate follow-up email
 - Downloadable review packet
 
+## Suggested Test Flow
+
+1. Launch the live demo.
+2. Load the “Field Sales Resume Review” sample scenario.
+3. Generate the resume review packet.
+4. Review the pipeline stage, review priority, match signals, and job-term coverage.
+5. Review missing or unclear information and follow-up interview questions.
+6. Review the manager summary and candidate email.
+7. Download the resume review packet.
+8. Optionally test the `.txt` or `.md` resume upload workflow.
+
 ## Responsible Use
 
 RecruitPilot AI does not make hiring decisions, reject candidates, rank candidates, or replace human judgment.
@@ -88,7 +99,7 @@ It should not be used as the sole basis for:
 
 ## Screenshots
 
-Screenshots will be refreshed after all portfolio apps are upgraded.
+Screenshots will be refreshed after all portfolio apps are upgraded and visually verified.
 
 ## Tech Stack
 
@@ -100,12 +111,6 @@ Screenshots will be refreshed after all portfolio apps are upgraded.
 - GitHub
 - Streamlit Community Cloud
 
-## Portfolio Purpose
-
-This project was built as part of Bradley Hankins' AI operations and workflow automation portfolio.
-
-RecruitPilot AI demonstrates how practical AI-assisted tools can help small and mid-sized businesses organize resume review, applicant tracking context, interview preparation, manager documentation, and candidate communication while keeping humans responsible for employment decisions.
-
 ## Run Locally
 
 ```bash
@@ -113,10 +118,15 @@ py -m pip install -r requirements.txt
 py -m streamlit run app.py
 ```
 
-## Built By
+## Public Demo Note
 
-Bradley Hankins  
-Operations & Revenue Leader | AI Workflow Automation | RevOps & Process Improvement
+All sample data, names, companies, and scenarios used in this project are fictional and created for public portfolio demonstration purposes.
+
+## Portfolio Purpose
+
+This project was built as part of Bradley Hankins' AI operations and workflow automation portfolio.
+
+RecruitPilot AI demonstrates how practical AI-assisted tools can help small and mid-sized businesses organize resume review, applicant tracking context, interview preparation, manager documentation, and candidate communication while keeping humans responsible for employment decisions.
 
 ## Case Study
 
@@ -185,3 +195,8 @@ Planned future improvements include:
 - Optional OpenAI API integration for dynamic summaries
 - Interview scorecard exports
 - Recruiting pipeline analytics
+
+## Built By
+
+Bradley Hankins  
+Operations & Revenue Leader | AI Workflow Automation | RevOps & Process Improvement
