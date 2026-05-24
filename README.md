@@ -1,21 +1,19 @@
 # RecruitPilot AI
 
-RecruitPilot AI is an AI-assisted candidate screening workflow tool for field-sales and small-business teams.
+RecruitPilot AI is a responsible ATS Lite resume review assistant for small-business and field-sales teams.
 
-It helps hiring managers turn candidate information and interview notes into:
+It helps hiring managers organize job descriptions and resume text into:
 
-- Candidate fit scores
-- Risk levels
-- Hiring recommendations
-- Role success profiles
-- Green flags
-- Red flags
-- Follow-up interview questions
-- Interview scorecards
-- Internal manager notes
+- Candidate pipeline stage
+- Resume review priority
+- Resume match signals
+- Missing or unclear information
+- Suggested follow-up interview questions
+- Manager-ready review summaries
 - Candidate follow-up emails
-- Onboarding plans
-- Downloadable candidate review reports
+- Downloadable resume review packets
+
+RecruitPilot AI is designed to support human review. It should not be used as the sole basis for selection, rejection, compensation, or employment decisions.
 
 ## Live Demo
 
@@ -23,7 +21,7 @@ It helps hiring managers turn candidate information and interview notes into:
 
 ## Why this project exists
 
-Small and mid-sized businesses often hire from scattered notes, informal interviews, and inconsistent evaluation processes. RecruitPilot AI helps standardize candidate screening so hiring managers can make clearer, more consistent decisions.
+Small and mid-sized businesses often review applicants from scattered notes, pasted resumes, job descriptions, and informal conversations. RecruitPilot AI helps organize applicant information into a cleaner review packet so hiring managers can prepare better questions and document next steps more consistently.
 
 ## Who this helps
 
@@ -37,70 +35,72 @@ RecruitPilot AI is designed for:
 - Operations leaders
 - Hiring managers
 
+## Current Version: v2.0
+
+RecruitPilot AI v2.0 is positioned as an ATS Lite resume review and candidate tracking assistant.
+
+It includes:
+
+- Job description input
+- Resume text input
+- Candidate pipeline stage tracking
+- Role type selector
+- Resume match signal extraction
+- Missing or unclear information checklist
+- Review priority labels
+- Follow-up interview questions
+- Manager-ready review summary
+- Candidate follow-up email template
+- Downloadable Markdown resume review packet
+- Responsible AI use note
+
 ## What it does
 
-The app allows users to enter candidate information and interview notes, then generates:
+The app allows users to paste a job description and resume text, then generates:
 
-- Candidate fit score
-- Risk level
-- Hiring recommendation
-- Recommended next step
-- Role success profile
-- Green flags
-- Red flags
-- Follow-up interview questions
-- Interview scorecard
-- Manager-ready candidate summary
+- Review priority
+- Pipeline stage snapshot
+- Count of resume match signals
+- Count of missing or unclear items
+- Job-related resume signals
+- Missing or unclear job terms
+- Suggested follow-up questions
+- Manager review summary
 - Candidate follow-up email
-- Onboarding plan
-- Downloadable Markdown candidate report
+- Downloadable review packet
+
+## Responsible Use
+
+RecruitPilot AI does not make hiring decisions, reject candidates, rank candidates, or replace human judgment.
+
+The app is intended to organize information and prepare a structured review packet for a human hiring manager.
+
+It should not be used as the sole basis for:
+
+- Selection decisions
+- Rejection decisions
+- Compensation decisions
+- Employment eligibility decisions
+- Final hiring recommendations
 
 ## Screenshots
 
-### Candidate Screening Builder
-
-![RecruitPilot AI Candidate Screening Builder](screenshots/candidate-builder.png)
-
-### Candidate Review
-
-![RecruitPilot AI Candidate Review](screenshots/candidate-review.png)
-
-### Role Success Profile
-
-![RecruitPilot AI Role Success Profile](screenshots/success-profile.png)
-
-### Green Flags and Red Flags
-
-![RecruitPilot AI Green Flags and Red Flags](screenshots/green-red-flags.png)
-
-### Interview Questions and Scorecard
-
-![RecruitPilot AI Interview Questions and Scorecard](screenshots/interview-questions-scorecard.png)
-
-### Manager Note and Candidate Email
-
-![RecruitPilot AI Manager Note and Candidate Email](screenshots/manager-note-email.png)
-
-### Recommended Onboarding Plan
-
-![RecruitPilot AI Onboarding Plan](screenshots/onboarding-plan.png)
-
-### Downloadable Candidate Report
-
-![RecruitPilot AI Downloadable Candidate Report](screenshots/download-candidate-report.png)
+Screenshots will be refreshed after all portfolio apps are upgraded.
 
 ## Tech Stack
 
 - Python
 - Streamlit
-- Rules-based AI-style workflow logic
+- Rules-based workflow logic
 - Markdown report export
+- GitHub
+- Streamlit Community Cloud
 
 ## Portfolio Purpose
 
 This project was built as part of Bradley Hankins' AI operations and workflow automation portfolio.
 
-RecruitPilot AI demonstrates how practical AI-assisted tools can help small and mid-sized businesses improve hiring consistency, candidate screening, manager documentation, interview structure, and onboarding preparation.
+RecruitPilot AI demonstrates how practical AI-assisted tools can help small and mid-sized businesses organize resume review, applicant tracking context, interview preparation, manager documentation, and candidate communication while keeping humans responsible for employment decisions.
 
 ## Run Locally
 
@@ -112,81 +112,70 @@ py -m streamlit run app.py
 ## Built By
 
 Bradley Hankins  
-Operations & Revenue Leader | Technology & AI Workflow Integration
+Operations & Revenue Leader | AI Workflow Automation | RevOps & Process Improvement
 
 ## Case Study
 
 ### Problem
 
-Small and mid-sized businesses often hire from scattered notes, informal interviews, and inconsistent evaluation processes. This can make it difficult for hiring managers to compare candidates fairly, identify risks, ask better follow-up questions, and prepare a clear onboarding plan.
+Small and mid-sized businesses often review applicants using scattered notes, resumes, job descriptions, and informal interview impressions. This can make it difficult to identify relevant resume signals, spot missing information, prepare follow-up questions, and document the review process consistently.
 
 Common issues include:
 
-- Inconsistent candidate evaluation
-- Interview notes that are hard to compare
-- Unclear hiring recommendations
-- Missed red flags
-- Lack of structured follow-up questions
-- No repeatable onboarding plan
-- Hiring decisions based too heavily on memory or gut feel
+- Resume review notes scattered across systems
+- Job requirements not clearly compared against resume text
+- Missing information not documented before interviews
+- Follow-up questions created from memory instead of a structured process
+- Candidate communication written manually each time
+- Little consistency in applicant review packets
 
 ### Solution
 
-RecruitPilot AI was built as a lightweight AI-assisted candidate screening workflow tool.
+RecruitPilot AI was rebuilt as a responsible ATS Lite resume review assistant.
 
-The app allows a hiring manager to enter candidate information and interview notes, then generates:
-
-- Candidate fit score
-- Risk level
-- Hiring recommendation
-- Role success profile
-- Green flags
-- Red flags
-- Follow-up interview questions
-- Interview scorecard
-- Internal manager note
-- Candidate follow-up email
-- Recommended onboarding plan
-- Downloadable candidate review report
+The app allows a user to paste a job description and resume text, select a role type and pipeline stage, then generate a structured review packet that organizes resume match signals, missing information, interview questions, manager summaries, and candidate communication.
 
 ### My Role
 
 I designed and built this project from concept to deployment, including:
 
 - Defining the recruiting workflow problem
-- Designing the candidate input structure
-- Mapping role fit criteria
+- Reframing the app for responsible human review
+- Designing the resume review workflow
 - Building the Streamlit app
-- Writing the rules-based AI-style scoring logic
-- Creating candidate risk and recommendation logic
-- Building downloadable Markdown reports
+- Writing rules-based keyword and signal extraction logic
+- Creating review priority labels
+- Creating manager-ready summaries
+- Creating candidate follow-up email templates
+- Building downloadable Markdown review packets
 - Preparing fictional sample scenarios for public portfolio use
 - Publishing the project on GitHub
 - Deploying the live demo
 
 ### Business Value
 
-RecruitPilot AI helps small and mid-sized businesses improve hiring consistency and manager documentation.
+RecruitPilot AI helps small and mid-sized businesses organize applicant review more consistently without replacing human judgment.
 
 The tool can help teams:
 
-- Compare candidates more consistently
-- Identify green flags and red flags faster
-- Ask better follow-up interview questions
-- Document hiring decisions clearly
-- Prepare onboarding focus areas earlier
-- Reduce reliance on scattered interview notes
-- Create a repeatable candidate screening process
+- Review job descriptions and resumes in one workflow
+- Identify resume signals related to the role
+- Document missing or unclear information
+- Prepare better follow-up interview questions
+- Create manager-ready review summaries
+- Standardize candidate communication
+- Produce downloadable review documentation
+- Improve applicant tracking discipline
 
 ### Future Improvements
 
 Planned future improvements include:
 
-- OpenAI API integration for dynamic candidate summaries
-- Resume upload and parsing
-- Job description matching
+- File upload for resumes
+- Job description templates
+- Multi-candidate tracking dashboard
+- CSV export for candidate pipeline records
 - PDF report downloads
-- Saved candidate profiles
+- Optional OpenAI API integration for dynamic summaries
 - Interview scorecard exports
-- Multi-candidate comparison dashboard
 - Recruiting pipeline analytics
