@@ -3,38 +3,12 @@ from collections import Counter
 
 import streamlit as st
 
-# -----------------------------------------------------------------------------
-# Page configuration
-# -----------------------------------------------------------------------------
+from ai_helpers import enhance_text
 
-st.set_page_config(
-    page_title="RecruitPilot AI",
-    page_icon="🧑‍💼",
-    layout="wide",
-)
+st.set_page_config(page_title="RecruitPilot AI", page_icon="🧑‍💼", layout="wide")
 
-# -----------------------------------------------------------------------------
-# App configuration
-# -----------------------------------------------------------------------------
-
-PIPELINE_STAGES = [
-    "New Applicant",
-    "Resume Review",
-    "Phone Screen",
-    "Interview Scheduled",
-    "Interview Completed",
-    "Reference Check",
-    "Human Decision Pending",
-]
-
-ROLE_TYPES = [
-    "Field Sales",
-    "Inside Sales",
-    "Operations",
-    "Customer Success",
-    "Project Management",
-    "General Business",
-]
+PIPELINE_STAGES = ["New Applicant", "Resume Review", "Phone Screen", "Interview Scheduled", "Interview Completed", "Reference Check", "Human Decision Pending"]
+ROLE_TYPES = ["Field Sales", "Inside Sales", "Operations", "Customer Success", "Project Management", "General Business"]
 
 SAMPLE_DATA = {
     "Blank / Custom": {},
@@ -65,14 +39,7 @@ KEYWORD_LIBRARY = {
     "General Business": ["customer", "communication", "organization", "crm", "process", "follow-up", "team", "documentation", "sales", "operations"],
 }
 
-RESPONSIBLE_USE_NOTE = (
-    "This tool organizes resume information for human review. It should not be used as the sole basis for "
-    "selection, rejection, compensation, or employment decisions."
-)
-
-# -----------------------------------------------------------------------------
-# Styling
-# -----------------------------------------------------------------------------
+RESPONSIBLE_USE_NOTE = "This tool organizes resume information for human review. It should not be used as the sole basis for selection, rejection, compensation, or employment decisions."
 
 CUSTOM_CSS = """
 <style>
@@ -105,10 +72,6 @@ CUSTOM_CSS = """
 """
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
 
-# -----------------------------------------------------------------------------
-# UI helpers
-# -----------------------------------------------------------------------------
-
 
 def section_title(title: str, lede: str | None = None) -> None:
     st.markdown(f'<div class="section-title">{title}</div>', unsafe_allow_html=True)
@@ -133,9 +96,9 @@ def html_list(items: list[str], empty_message: str) -> str:
     visible_items = items or [empty_message]
     return "<ul>" + "".join(f"<li>{item}</li>" for item in visible_items) + "</ul>"
 
-# -----------------------------------------------------------------------------
-# Resume review logic
-# -----------------------------------------------------------------------------
+
+def md_to_html(text: str) -> str:
+    return "<p>" + text.replace("\n\n", "</p><p>").replace("\n", "<br>") + "</p>"
 
 
 def tokenize(text: str) -> list[str]:
@@ -205,10 +168,6 @@ def next_human_review_step(review: dict) -> str:
         return "Request clarification or additional resume detail before scheduling next steps."
     return "Manually review the resume text and job requirements before taking next action."
 
-# -----------------------------------------------------------------------------
-# Output generation
-# -----------------------------------------------------------------------------
-
 
 def manager_summary(candidate_name: str, role_title: str, pipeline_stage: str, review: dict, next_step: str) -> str:
     name = candidate_name or "Candidate"
@@ -236,6 +195,72 @@ We are reviewing application materials and may follow up with additional questio
 Thanks again,
 Hiring Team"""
     return subject, body
+
+
+def build_ai_review_prompt(candidate_name, role_title, role_type, pipeline_stage, job_description, resume_text, review, questions, summary, subject, email):
+    return f"""
+You are an interview preparation assistant for human hiring managers.
+Support human review only. Do not rank, reject, select, score, or recommend whether to hire the person.
+Do not infer protected characteristics. Do not invent facts not present in the materials.
+Improve the manager summary, clarification questions, and candidate communication while preserving responsible-use boundaries.
+
+Candidate: {candidate_name or 'N/A'}
+Role title: {role_title}
+Role type: {role_type}
+Pipeline stage: {pipeline_stage}
+Job description:
+{job_description}
+
+Resume text:
+{resume_text}
+
+Rules-based review:
+{review}
+
+Rules-based questions:
+{questions}
+
+Rules-based manager summary:
+{summary}
+
+Rules-based candidate email subject: {subject}
+Rules-based candidate email:
+{email}
+
+Return exactly in this format:
+MANAGER SUMMARY:
+...
+
+FOLLOW-UP QUESTIONS:
+1. ...
+2. ...
+
+CANDIDATE EMAIL SUBJECT:
+...
+
+CANDIDATE EMAIL BODY:
+...
+"""
+
+
+def parse_ai_review(raw: str, fallback_summary: str, fallback_questions: list[str], fallback_subject: str, fallback_email: str) -> tuple[str, list[str], str, str]:
+    if not raw:
+        return fallback_summary, fallback_questions, fallback_subject, fallback_email
+    sections = {"MANAGER SUMMARY": "summary", "FOLLOW-UP QUESTIONS": "questions", "CANDIDATE EMAIL SUBJECT": "subject", "CANDIDATE EMAIL BODY": "email"}
+    parsed = {"summary": fallback_summary, "questions": "\n".join(fallback_questions), "subject": fallback_subject, "email": fallback_email}
+    for heading, key in sections.items():
+        start = raw.find(f"{heading}:")
+        if start == -1:
+            continue
+        start += len(f"{heading}:")
+        end_candidates = [raw.find(f"{next_heading}:", start) for next_heading in sections if next_heading != heading]
+        end_candidates = [idx for idx in end_candidates if idx != -1]
+        end = min(end_candidates) if end_candidates else len(raw)
+        value = raw[start:end].strip()
+        if value:
+            parsed[key] = value
+    question_lines = [re.sub(r"^\d+[.)]\s*", "", line.strip(" -\t")) for line in parsed["questions"].splitlines() if line.strip()]
+    return parsed["summary"], question_lines[:8] or fallback_questions, parsed["subject"], parsed["email"]
 
 
 def csv_escape(value: str) -> str:
@@ -295,13 +320,10 @@ Subject: {subject}
 Generated by RecruitPilot AI.
 """
 
-# -----------------------------------------------------------------------------
-# Sidebar and hero
-# -----------------------------------------------------------------------------
 
 with st.sidebar:
     st.title("RecruitPilot AI")
-    st.caption("Version 2.2")
+    st.caption("Version 2.3")
     st.markdown("ATS Lite resume review assistant for organizing applicant information before human review.")
     st.divider()
     st.markdown("### Outputs")
@@ -342,6 +364,8 @@ questions = followup_questions(role_title, review["matched_terms"], review["miss
 next_step = next_human_review_step(review)
 summary = manager_summary(candidate_name, role_title, pipeline_stage, review, next_step)
 subject, email = candidate_email(candidate_name, role_title)
+raw_ai = enhance_text(build_ai_review_prompt(candidate_name, role_title, role_type, pipeline_stage, job_description, resume_text, review, questions, summary, subject, email), "", f"recruitpilot_review_{hash(candidate_name + role_title + job_description + resume_text)}")
+summary, questions, subject, email = parse_ai_review(raw_ai, summary, questions, subject, email)
 packet = build_review_packet(candidate_name, role_title, role_type, pipeline_stage, job_description, resume_text, review, questions, summary, subject, email, next_step)
 tracker_csv = build_tracker_csv(candidate_name, role_title, pipeline_stage, review, next_step)
 
@@ -397,6 +421,6 @@ with download_col2:
     st.download_button("Download Candidate Tracker CSV Row", data=tracker_csv, file_name="recruitpilot-candidate-tracker-row.csv", mime="text/csv", use_container_width=True)
 
 section_title("What this app demonstrates")
-html_card("Portfolio Skills Shown", "<ul><li>Responsible AI workflow design</li><li>Resume and job description text parsing</li><li>Rules-based review organization</li><li>Manager-ready documentation</li><li>Downloadable Markdown and CSV exports</li></ul>", "signal-card")
+html_card("Portfolio Skills Shown", "<ul><li>AI-enhanced interview prep with rules-based fallback</li><li>Responsible AI workflow design</li><li>Resume and job description text parsing</li><li>Rules-based review organization</li><li>Manager-ready documentation</li><li>Downloadable Markdown and CSV exports</li></ul>", "signal-card")
 
 st.markdown('<div class="note-box">Privacy note: Information entered into this app is processed during the active session and is not saved by this app.</div>', unsafe_allow_html=True)
