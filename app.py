@@ -1,49 +1,21 @@
-import re
-from collections import Counter
-
 import streamlit as st
 
 from ai_helpers import enhance_text, stable_cache_key
+from core.prompts import build_ai_review_prompt, parse_ai_review
+from core.report_builder import build_review_packet, build_tracker_csv
+from core.review_logic import limit_text, run_review_workflow
+from data.sample_data import (
+    MAX_TEXT_CHARS,
+    MAX_UPLOAD_BYTES,
+    PIPELINE_STAGES,
+    PRIVACY_NOTE,
+    RESPONSIBLE_USE_NOTE,
+    ROLE_TYPES,
+    SAMPLE_DATA,
+)
 from pdf_helpers import markdown_to_pdf
 
 st.set_page_config(page_title="RecruitPilot AI", page_icon="🧑‍💼", layout="wide")
-
-PIPELINE_STAGES = ["New Applicant", "Resume Review", "Phone Screen", "Interview Scheduled", "Interview Completed", "Reference Check", "Human Decision Pending"]
-ROLE_TYPES = ["Field Sales", "Inside Sales", "Operations", "Customer Success", "Project Management", "General Business"]
-MAX_UPLOAD_BYTES = 750_000
-MAX_TEXT_CHARS = 12000
-
-SAMPLE_DATA = {
-    "Blank / Custom": {},
-    "Field Sales Resume Review": {
-        "candidate_name": "Jordan Miller",
-        "role_title": "Field Sales Consultant",
-        "role_type": "Field Sales",
-        "pipeline_stage": "Resume Review",
-        "job_description": "We are looking for a field sales consultant with customer-facing sales experience, strong follow-up habits, CRM usage, comfort with prospecting, appointment setting, and the ability to explain value clearly to homeowners.",
-        "resume_text": "Jordan Miller has 4 years of customer-facing sales experience in home services. Experience includes appointment setting, CRM updates, outbound follow-up, lead tracking, customer presentations, and working with homeowners to explain project options.",
-    },
-    "Operations Resume Review": {
-        "candidate_name": "Morgan Ellis",
-        "role_title": "Operations Coordinator",
-        "role_type": "Operations",
-        "pipeline_stage": "Resume Review",
-        "job_description": "Seeking an operations coordinator with strong organization, scheduling, CRM or spreadsheet experience, documentation habits, customer communication, and process follow-through.",
-        "resume_text": "Morgan Ellis has experience coordinating schedules, managing spreadsheets, updating CRM records, documenting customer notes, and supporting office workflows. Strong organization and communication skills.",
-    },
-}
-
-KEYWORD_LIBRARY = {
-    "Field Sales": ["sales", "prospecting", "follow-up", "crm", "appointment", "customer", "presentation", "closing", "lead", "outbound", "homeowner"],
-    "Inside Sales": ["sales", "phone", "email", "crm", "lead", "appointment", "follow-up", "customer", "pipeline", "inbound", "outbound"],
-    "Operations": ["operations", "scheduling", "spreadsheet", "crm", "documentation", "process", "coordination", "customer", "office", "workflow"],
-    "Customer Success": ["customer", "service", "support", "retention", "follow-up", "communication", "issue", "crm", "experience", "resolution"],
-    "Project Management": ["project", "schedule", "coordination", "customer", "vendor", "timeline", "documentation", "scope", "quality", "communication"],
-    "General Business": ["customer", "communication", "organization", "crm", "process", "follow-up", "team", "documentation", "sales", "operations"],
-}
-
-RESPONSIBLE_USE_NOTE = "This tool organizes resume information for human review. It should not be used as the sole basis for selection, rejection, compensation, or employment decisions."
-PRIVACY_NOTE = "Privacy note: Use fictional/sample data for public demos. Do not upload sensitive, confidential, regulated, or unnecessary personal information. If AI is enabled, the entered text may be processed by the configured AI provider for output enhancement."
 
 CUSTOM_CSS = """
 <style>
@@ -101,16 +73,6 @@ def html_list(items: list[str], empty_message: str) -> str:
     return "<ul>" + "".join(f"<li>{item}</li>" for item in visible_items) + "</ul>"
 
 
-def limit_text(text: str, max_chars: int = MAX_TEXT_CHARS) -> tuple[str, bool]:
-    if len(text) <= max_chars:
-        return text, False
-    return text[:max_chars], True
-
-
-def tokenize(text: str) -> list[str]:
-    return re.findall(r"[a-zA-Z][a-zA-Z\-]+", text.lower())
-
-
 def decode_uploaded_text(uploaded_file) -> str:
     if uploaded_file is None:
         return ""
@@ -123,321 +85,213 @@ def decode_uploaded_text(uploaded_file) -> str:
         return uploaded_file.getvalue().decode("latin-1", errors="ignore")
 
 
-def extract_job_terms(job_description: str, role_type: str) -> list[str]:
-    tokens = tokenize(job_description)
-    counts = Counter(tokens)
-    library_terms = KEYWORD_LIBRARY.get(role_type, KEYWORD_LIBRARY["General Business"])
-    role_terms_found = [term for term in library_terms if term.lower() in job_description.lower()]
-    common_job_terms = [word for word, _ in counts.most_common(24) if len(word) > 4 and word not in {"looking", "seeking", "strong", "experience"}]
-    return list(dict.fromkeys(role_terms_found + common_job_terms))[:18]
+def render_sidebar() -> None:
+    with st.sidebar:
+        st.title("RecruitPilot AI")
+        st.caption("Version 2.6")
+        st.markdown("ATS Lite resume review assistant for organizing applicant information before human review.")
+        st.divider()
+        st.markdown("### Outputs")
+        st.markdown("- Pipeline stage\n- Review priority\n- Resume match signals\n- Missing information\n- Follow-up questions\n- Manager summary\n- Candidate email\n- PDF review packet")
 
 
-def review_resume(job_description: str, resume_text: str, role_type: str) -> dict:
-    role_terms = KEYWORD_LIBRARY.get(role_type, KEYWORD_LIBRARY["General Business"])
-    job_terms = extract_job_terms(job_description, role_type)
-    resume_lower = resume_text.lower()
-    matched_role_terms = [term for term in role_terms if term.lower() in resume_lower]
-    matched_job_terms = [term for term in job_terms if term.lower() in resume_lower]
-    missing_job_terms = [term for term in job_terms if term.lower() not in resume_lower]
-    unique_matches = list(dict.fromkeys(matched_role_terms + matched_job_terms))
-    signal_count = len(unique_matches)
-    missing_count = len(missing_job_terms)
-    total_terms = max(len(job_terms), 1)
-    coverage = round((len(matched_job_terms) / total_terms) * 100)
-    if not resume_text.strip():
-        priority = "Manual Review Recommended"
-        priority_note = "Resume text was not provided or could not be reviewed."
-    elif signal_count >= 8 and missing_count <= 6:
-        priority = "High Review Priority"
-        priority_note = "Resume contains several job-related signals worth human review."
-    elif signal_count >= 4:
-        priority = "Standard Review Priority"
-        priority_note = "Resume contains some relevant signals, but additional review is needed."
-    else:
-        priority = "Needs More Information"
-        priority_note = "Resume text has limited obvious overlap with the job description. Human review should clarify context."
-    return {"priority": priority, "priority_note": priority_note, "matched_terms": unique_matches[:12], "missing_terms": missing_job_terms[:12], "job_terms": job_terms, "signal_count": signal_count, "missing_count": missing_count, "coverage": coverage}
-
-
-def followup_questions(role_title: str, signals: list[str], missing_terms: list[str]) -> list[str]:
-    questions = [f"What interests you most about the {role_title} role?", "Walk me through the experience on your resume that best connects to this role.", "What type of work environment helps you perform at your best?", "How do you stay organized with tasks, notes, and follow-up?"]
-    for term in missing_terms[:4]:
-        questions.append(f"Can you share any experience related to {term} that may not be clear on your resume?")
-    if signals:
-        questions.append(f"Your resume mentions {signals[0]}. Can you give a specific example of how you used that in a previous role?")
-    return questions[:8]
-
-
-def next_human_review_step(review: dict) -> str:
-    if review["priority"] == "High Review Priority":
-        return "Schedule a human phone screen to clarify the strongest resume signals."
-    if review["priority"] == "Standard Review Priority":
-        return "Review missing information, then decide whether a phone screen is warranted."
-    if review["priority"] == "Needs More Information":
-        return "Request clarification or additional resume detail before scheduling next steps."
-    return "Manually review the resume text and job requirements before taking next action."
-
-
-def manager_summary(candidate_name: str, role_title: str, pipeline_stage: str, review: dict, next_step: str) -> str:
-    name = candidate_name or "Candidate"
-    return f"""{name} is currently in the {pipeline_stage} stage for the {role_title} role.
-
-Review Priority: {review['priority']}
-Review Signal Count: {review['signal_count']}
-Job-Term Coverage: {review['coverage']}%
-Next Human Review Step: {next_step}
-Summary: {review['priority_note']}
-
-{RESPONSIBLE_USE_NOTE}
-"""
-
-
-def candidate_email(candidate_name: str, role_title: str) -> tuple[str, str]:
-    name = candidate_name or "there"
-    subject = f"Following Up on the {role_title} Opportunity"
-    body = f"""Hi {name},
-
-Thank you for your interest in the {role_title} opportunity.
-
-We are reviewing application materials and may follow up with additional questions about your experience, role expectations, and next steps.
-
-Thanks again,
-Hiring Team"""
-    return subject, body
-
-
-def build_ai_review_prompt(candidate_name, role_title, role_type, pipeline_stage, job_description, resume_text, review, questions, summary, subject, email):
-    return f"""
-You are an interview preparation assistant for human hiring managers.
-Support human review only. Do not rank, reject, select, score, or recommend whether to hire the person.
-Do not infer protected characteristics. Do not invent facts not present in the materials.
-Improve the manager summary, clarification questions, and candidate communication while preserving responsible-use boundaries.
-
-Candidate: {candidate_name or 'N/A'}
-Role title: {role_title}
-Role type: {role_type}
-Pipeline stage: {pipeline_stage}
-Job description:
-{job_description}
-
-Resume text:
-{resume_text}
-
-Rules-based review:
-{review}
-
-Rules-based questions:
-{questions}
-
-Rules-based manager summary:
-{summary}
-
-Rules-based candidate email subject: {subject}
-Rules-based candidate email:
-{email}
-
-Return exactly in this format:
-MANAGER SUMMARY:
-...
-
-FOLLOW-UP QUESTIONS:
-1. ...
-2. ...
-
-CANDIDATE EMAIL SUBJECT:
-...
-
-CANDIDATE EMAIL BODY:
-...
-"""
-
-
-def parse_ai_review(raw: str, fallback_summary: str, fallback_questions: list[str], fallback_subject: str, fallback_email: str) -> tuple[str, list[str], str, str]:
-    if not raw:
-        return fallback_summary, fallback_questions, fallback_subject, fallback_email
-    sections = {"MANAGER SUMMARY": "summary", "FOLLOW-UP QUESTIONS": "questions", "CANDIDATE EMAIL SUBJECT": "subject", "CANDIDATE EMAIL BODY": "email"}
-    parsed = {"summary": fallback_summary, "questions": "\n".join(fallback_questions), "subject": fallback_subject, "email": fallback_email}
-    for heading, key in sections.items():
-        start = raw.find(f"{heading}:")
-        if start == -1:
-            continue
-        start += len(f"{heading}:")
-        end_candidates = [raw.find(f"{next_heading}:", start) for next_heading in sections if next_heading != heading]
-        end_candidates = [idx for idx in end_candidates if idx != -1]
-        end = min(end_candidates) if end_candidates else len(raw)
-        value = raw[start:end].strip()
-        if value:
-            parsed[key] = value
-    question_lines = [re.sub(r"^\d+[.)]\s*", "", line.strip(" -\t")) for line in parsed["questions"].splitlines() if line.strip()]
-    return parsed["summary"], question_lines[:8] or fallback_questions, parsed["subject"], parsed["email"]
-
-
-def csv_escape(value: str) -> str:
-    return '"' + str(value).replace('"', '""') + '"'
-
-
-def build_tracker_csv(candidate_name: str, role_title: str, pipeline_stage: str, review: dict, next_step: str) -> str:
-    headers = ["Candidate Name", "Role", "Stage", "Review Priority", "Match Signals", "Missing Items", "Job-Term Coverage", "Next Human Review Step"]
-    row = [candidate_name or "N/A", role_title, pipeline_stage, review["priority"], "; ".join(review["matched_terms"]), "; ".join(review["missing_terms"]), f"{review['coverage']}%", next_step]
-    return ",".join(headers) + "\n" + ",".join(csv_escape(item) for item in row)
-
-
-def build_review_packet(candidate_name: str, role_title: str, role_type: str, pipeline_stage: str, job_description: str, resume_text: str, review: dict, questions: list[str], summary: str, subject: str, email: str, next_step: str) -> str:
-    signal_lines = "\n".join(f"- {item}" for item in review["matched_terms"]) or "- No clear match signals found from the provided text."
-    missing_lines = "\n".join(f"- {item}" for item in review["missing_terms"]) or "- No major missing terms identified from the provided job description."
-    question_lines = "\n".join(f"{index + 1}. {question}" for index, question in enumerate(questions))
-    return f"""# RecruitPilot AI Resume Review Packet
-
-## Candidate Tracking
-Candidate: {candidate_name or 'N/A'}
-Role Title: {role_title}
-Role Type: {role_type}
-Pipeline Stage: {pipeline_stage}
-Review Priority: {review['priority']}
-Review Signal Count: {review['signal_count']}
-Job-Term Coverage: {review['coverage']}%
-Next Human Review Step: {next_step}
-
-## Responsible Use Note
-{RESPONSIBLE_USE_NOTE}
-
-## Job Description
-{job_description or 'No job description provided.'}
-
-## Resume Text Reviewed
-{resume_text or 'No resume text provided.'}
-
-## Resume Match Signals
-{signal_lines}
-
-## Missing / Unclear Information
-{missing_lines}
-
-## Suggested Follow-Up Questions
-{question_lines}
-
-## Manager Review Summary
-{summary}
-
-## Candidate Follow-Up Email
-Subject: {subject}
-
-{email}
-
----
-
-Generated by RecruitPilot AI.
-"""
-
-
-with st.sidebar:
-    st.title("RecruitPilot AI")
-    st.caption("Version 2.5")
-    st.markdown("ATS Lite resume review assistant for organizing applicant information before human review.")
-    st.divider()
-    st.markdown("### Outputs")
-    st.markdown("- Pipeline stage\n- Review priority\n- Resume match signals\n- Missing information\n- Follow-up questions\n- Manager summary\n- Candidate email\n- PDF review packet")
-
-st.markdown("""
+def render_hero() -> None:
+    st.markdown(
+        """
 <div class="hero"><div class="eyebrow">ATS Lite Resume Review Assistant</div><div class="hero-title">RecruitPilot AI</div><div class="hero-subtitle">Organize job descriptions and resume text into review priorities, match signals, missing information, follow-up questions, and manager-ready review packets.</div><div class="hero-pills"><span>ATS Lite</span><span>Resume Review</span><span>Pipeline Tracking</span><span>Interview Prep</span><span>Streamlit</span></div></div>
-""", unsafe_allow_html=True)
+""",
+        unsafe_allow_html=True,
+    )
 
-section_title("Resume review builder", "Load a fictional sample, paste a job description and resume text, or upload a plain-text resume file. This tool supports human review and does not make employment decisions.")
-st.markdown(f'<div class="note-box">{PRIVACY_NOTE}</div>', unsafe_allow_html=True)
-scenario_name = st.selectbox("Load Sample Scenario", list(SAMPLE_DATA.keys()))
-scenario = SAMPLE_DATA.get(scenario_name, {})
-uploaded_resume = st.file_uploader("Optional: Upload resume text file (.txt or .md)", type=["txt", "md"], help=f"Plain text only. Max file size: {MAX_UPLOAD_BYTES // 1000} KB.")
-uploaded_resume_text = decode_uploaded_text(uploaded_resume)
 
-with st.form("resume_review_form"):
-    form_group("Candidate and pipeline details")
-    detail_col1, detail_col2, detail_col3 = st.columns(3)
-    with detail_col1:
-        candidate_name = st.text_input("Candidate Name", value=scenario.get("candidate_name", ""), placeholder="Example: Jordan Miller")
-    with detail_col2:
-        role_title = st.text_input("Role Title", value=scenario.get("role_title", ""), placeholder="Example: Field Sales Consultant")
-    with detail_col3:
-        pipeline_stage = st.selectbox("Pipeline Stage", PIPELINE_STAGES, index=PIPELINE_STAGES.index(scenario.get("pipeline_stage", "Resume Review")))
-    role_type = st.selectbox("Role Type", ROLE_TYPES, index=ROLE_TYPES.index(scenario.get("role_type", "Field Sales")))
-    form_group("Job description and resume text")
-    job_description = st.text_area("Job Description / Role Requirements", value=scenario.get("job_description", ""), height=150, max_chars=MAX_TEXT_CHARS)
-    resume_text = st.text_area("Resume Text", value=uploaded_resume_text or scenario.get("resume_text", ""), height=180, max_chars=MAX_TEXT_CHARS)
-    submitted = st.form_submit_button("Generate Resume Review Packet", use_container_width=True)
+def build_inputs() -> dict | None:
+    scenario_name = st.selectbox("Load Sample Scenario", list(SAMPLE_DATA.keys()))
+    scenario = SAMPLE_DATA.get(scenario_name, {})
+    uploaded_resume = st.file_uploader(
+        "Optional: Upload resume text file (.txt or .md)",
+        type=["txt", "md"],
+        help=f"Plain text only. Max file size: {MAX_UPLOAD_BYTES // 1000} KB.",
+    )
+    uploaded_resume_text = decode_uploaded_text(uploaded_resume)
 
-if not submitted:
-    st.markdown('<div class="note-box">Paste a job description and resume text, load a sample scenario, or upload a .txt/.md resume file, then generate the review packet.</div>', unsafe_allow_html=True)
-    st.stop()
+    with st.form("resume_review_form"):
+        form_group("Candidate and pipeline details")
+        detail_col1, detail_col2, detail_col3 = st.columns(3)
+        with detail_col1:
+            candidate_name = st.text_input("Candidate Name", value=scenario.get("candidate_name", ""), placeholder="Example: Jordan Miller")
+        with detail_col2:
+            role_title = st.text_input("Role Title", value=scenario.get("role_title", ""), placeholder="Example: Field Sales Consultant")
+        with detail_col3:
+            pipeline_stage = st.selectbox("Pipeline Stage", PIPELINE_STAGES, index=PIPELINE_STAGES.index(scenario.get("pipeline_stage", "Resume Review")))
+        role_type = st.selectbox("Role Type", ROLE_TYPES, index=ROLE_TYPES.index(scenario.get("role_type", "Field Sales")))
 
-job_description, job_trimmed = limit_text(job_description)
-resume_text, resume_trimmed = limit_text(resume_text)
-if job_trimmed or resume_trimmed:
-    st.warning(f"Input was trimmed to {MAX_TEXT_CHARS:,} characters before analysis to keep the app reliable and cost-conscious.")
+        form_group("Job description and resume text")
+        job_description = st.text_area("Job Description / Role Requirements", value=scenario.get("job_description", ""), height=150, max_chars=MAX_TEXT_CHARS)
+        resume_text = st.text_area("Resume Text", value=uploaded_resume_text or scenario.get("resume_text", ""), height=180, max_chars=MAX_TEXT_CHARS)
+        submitted = st.form_submit_button("Generate Resume Review Packet", use_container_width=True)
 
-role_title = role_title or "Open Role"
-review = review_resume(job_description, resume_text, role_type)
-questions = followup_questions(role_title, review["matched_terms"], review["missing_terms"])
-next_step = next_human_review_step(review)
-summary = manager_summary(candidate_name, role_title, pipeline_stage, review, next_step)
-subject, email = candidate_email(candidate_name, role_title)
-ai_cache_key = stable_cache_key("recruitpilot_review", {"candidate_name": candidate_name, "role_title": role_title, "job_description": job_description, "resume_text": resume_text})
-raw_ai = enhance_text(build_ai_review_prompt(candidate_name, role_title, role_type, pipeline_stage, job_description, resume_text, review, questions, summary, subject, email), "", ai_cache_key)
-summary, questions, subject, email = parse_ai_review(raw_ai, summary, questions, subject, email)
-packet = build_review_packet(candidate_name, role_title, role_type, pipeline_stage, job_description, resume_text, review, questions, summary, subject, email, next_step)
-pdf_packet = markdown_to_pdf(packet, title="RecruitPilot AI Resume Review Packet")
-tracker_csv = build_tracker_csv(candidate_name, role_title, pipeline_stage, review, next_step)
+    if not submitted:
+        return None
 
-section_title("Candidate review packet preview")
-preview_col1, preview_col2, preview_col3, preview_col4 = st.columns(4)
-with preview_col1:
-    metric_card("Candidate", candidate_name or "N/A")
-with preview_col2:
-    metric_card("Stage", pipeline_stage)
-with preview_col3:
-    metric_card("Review Priority", review["priority"])
-with preview_col4:
-    metric_card("Job-Term Coverage", f"{review['coverage']}%")
-html_card("Next Human Review Step", f"<p>{next_step}</p>", "workflow-card")
+    job_description, job_trimmed = limit_text(job_description, MAX_TEXT_CHARS)
+    resume_text, resume_trimmed = limit_text(resume_text, MAX_TEXT_CHARS)
+    if job_trimmed or resume_trimmed:
+        st.warning(f"Input was trimmed to {MAX_TEXT_CHARS:,} characters before analysis to keep the app reliable and cost-conscious.")
 
-section_title("Review snapshot")
-snapshot_col1, snapshot_col2, snapshot_col3, snapshot_col4 = st.columns(4)
-with snapshot_col1:
-    metric_card("Pipeline Stage", pipeline_stage)
-with snapshot_col2:
-    metric_card("Match Signals", str(review["signal_count"]))
-with snapshot_col3:
-    metric_card("Missing Items", str(review["missing_count"]))
-with snapshot_col4:
-    metric_card("Role Type", role_type)
+    return {
+        "candidate_name": candidate_name,
+        "role_title": role_title or "Open Role",
+        "role_type": role_type,
+        "pipeline_stage": pipeline_stage,
+        "job_description": job_description,
+        "resume_text": resume_text,
+    }
 
-html_card("Responsible Use Note", f"<p>{RESPONSIBLE_USE_NOTE}</p>", "warning-card")
-html_card("Review Priority Explanation", f"<p>{review['priority_note']}</p>", "output-card")
 
-section_title("Resume match signals and missing information")
-match_col, missing_col = st.columns(2)
-with match_col:
-    html_card("Resume Match Signals", html_list(review["matched_terms"], "No clear match signals found from the provided text."), "signal-card")
-with missing_col:
-    html_card("Missing / Unclear Information", html_list(review["missing_terms"], "No major missing terms identified from the provided job description."), "warning-card")
+def enhance_review(inputs: dict, workflow: dict) -> dict:
+    raw_ai = enhance_text(
+        build_ai_review_prompt(
+            inputs["candidate_name"],
+            workflow["role_title"],
+            inputs["role_type"],
+            inputs["pipeline_stage"],
+            inputs["job_description"],
+            inputs["resume_text"],
+            workflow["review"],
+            workflow["questions"],
+            workflow["summary"],
+            workflow["subject"],
+            workflow["email"],
+        ),
+        "",
+        stable_cache_key(
+            "recruitpilot_review",
+            {
+                "candidate_name": inputs["candidate_name"],
+                "role_title": workflow["role_title"],
+                "job_description": inputs["job_description"],
+                "resume_text": inputs["resume_text"],
+            },
+        ),
+    )
+    summary, questions, subject, email = parse_ai_review(
+        raw_ai,
+        workflow["summary"],
+        workflow["questions"],
+        workflow["subject"],
+        workflow["email"],
+    )
+    workflow.update({"summary": summary, "questions": questions, "subject": subject, "email": email})
+    return workflow
 
-section_title("Interview follow-up support")
-html_card("Suggested Follow-Up Questions", "<ol>" + "".join(f"<li>{question}</li>" for question in questions) + "</ol>", "workflow-card")
 
-section_title("Manager and candidate communication")
-summary_tab, email_tab = st.tabs(["Manager Summary", "Candidate Email"])
-with summary_tab:
-    st.text_area("Manager-ready summary", summary, height=260)
-with email_tab:
-    st.text_input("Subject Line", subject)
-    st.text_area("Candidate email", email, height=220)
+def render_results(inputs: dict, workflow: dict, pdf_packet: bytes, tracker_csv: str) -> None:
+    review = workflow["review"]
 
-section_title("Downloads")
-download_col1, download_col2 = st.columns(2)
-with download_col1:
-    st.download_button("Download Resume Review Packet PDF", data=pdf_packet, file_name="recruitpilot-resume-review-packet.pdf", mime="application/pdf", use_container_width=True)
-with download_col2:
-    st.download_button("Download Candidate Tracker CSV Row", data=tracker_csv, file_name="recruitpilot-candidate-tracker-row.csv", mime="text/csv", use_container_width=True)
+    section_title("Candidate review packet preview")
+    preview_col1, preview_col2, preview_col3, preview_col4 = st.columns(4)
+    with preview_col1:
+        metric_card("Candidate", inputs["candidate_name"] or "N/A")
+    with preview_col2:
+        metric_card("Stage", inputs["pipeline_stage"])
+    with preview_col3:
+        metric_card("Review Priority", review["priority"])
+    with preview_col4:
+        metric_card("Job-Term Coverage", f"{review['coverage']}%")
+    html_card("Next Human Review Step", f"<p>{workflow['next_step']}</p>", "workflow-card")
 
-section_title("What this app demonstrates")
-html_card("Portfolio Skills Shown", "<ul><li>AI-enhanced interview prep with rules-based fallback</li><li>Responsible AI workflow design</li><li>Resume and job description text parsing</li><li>Rules-based review organization</li><li>Input-size and privacy-conscious upload handling</li><li>User-friendly PDF and CSV exports</li></ul>", "signal-card")
+    section_title("Review snapshot")
+    snapshot_col1, snapshot_col2, snapshot_col3, snapshot_col4 = st.columns(4)
+    with snapshot_col1:
+        metric_card("Pipeline Stage", inputs["pipeline_stage"])
+    with snapshot_col2:
+        metric_card("Match Signals", str(review["signal_count"]))
+    with snapshot_col3:
+        metric_card("Missing Items", str(review["missing_count"]))
+    with snapshot_col4:
+        metric_card("Role Type", inputs["role_type"])
 
-st.markdown(f'<div class="note-box">{PRIVACY_NOTE}</div>', unsafe_allow_html=True)
+    html_card("Responsible Use Note", f"<p>{RESPONSIBLE_USE_NOTE}</p>", "warning-card")
+    html_card("Review Priority Explanation", f"<p>{review['priority_note']}</p>", "output-card")
+
+    section_title("Resume match signals and missing information")
+    match_col, missing_col = st.columns(2)
+    with match_col:
+        html_card("Resume Match Signals", html_list(review["matched_terms"], "No clear match signals found from the provided text."), "signal-card")
+    with missing_col:
+        html_card("Missing / Unclear Information", html_list(review["missing_terms"], "No major missing terms identified from the provided job description."), "warning-card")
+
+    section_title("Interview follow-up support")
+    html_card("Suggested Follow-Up Questions", "<ol>" + "".join(f"<li>{question}</li>" for question in workflow["questions"]) + "</ol>", "workflow-card")
+
+    section_title("Manager and candidate communication")
+    summary_tab, email_tab = st.tabs(["Manager Summary", "Candidate Email"])
+    with summary_tab:
+        st.text_area("Manager-ready summary", workflow["summary"], height=260)
+    with email_tab:
+        st.text_input("Subject Line", workflow["subject"])
+        st.text_area("Candidate email", workflow["email"], height=220)
+
+    section_title("Downloads")
+    download_col1, download_col2 = st.columns(2)
+    with download_col1:
+        st.download_button("Download Resume Review Packet PDF", data=pdf_packet, file_name="recruitpilot-resume-review-packet.pdf", mime="application/pdf", use_container_width=True)
+    with download_col2:
+        st.download_button("Download Candidate Tracker CSV Row", data=tracker_csv, file_name="recruitpilot-candidate-tracker-row.csv", mime="text/csv", use_container_width=True)
+
+
+def main() -> None:
+    render_sidebar()
+    render_hero()
+
+    section_title("Resume review builder", "Load a fictional sample, paste a job description and resume text, or upload a plain-text resume file. This tool supports human review and does not make employment decisions.")
+    st.markdown(f'<div class="note-box">{PRIVACY_NOTE}</div>', unsafe_allow_html=True)
+
+    inputs = build_inputs()
+    if inputs is None:
+        st.markdown('<div class="note-box">Paste a job description and resume text, load a sample scenario, or upload a .txt/.md resume file, then generate the review packet.</div>', unsafe_allow_html=True)
+        return
+
+    workflow = run_review_workflow(
+        inputs["candidate_name"],
+        inputs["role_title"],
+        inputs["pipeline_stage"],
+        inputs["role_type"],
+        inputs["job_description"],
+        inputs["resume_text"],
+        RESPONSIBLE_USE_NOTE,
+    )
+    workflow = enhance_review(inputs, workflow)
+
+    packet = build_review_packet(
+        inputs["candidate_name"],
+        workflow["role_title"],
+        inputs["role_type"],
+        inputs["pipeline_stage"],
+        inputs["job_description"],
+        inputs["resume_text"],
+        workflow["review"],
+        workflow["questions"],
+        workflow["summary"],
+        workflow["subject"],
+        workflow["email"],
+        workflow["next_step"],
+        RESPONSIBLE_USE_NOTE,
+    )
+    pdf_packet = markdown_to_pdf(packet, title="RecruitPilot AI Resume Review Packet")
+    tracker_csv = build_tracker_csv(inputs["candidate_name"], workflow["role_title"], inputs["pipeline_stage"], workflow["review"], workflow["next_step"])
+
+    render_results(inputs, workflow, pdf_packet, tracker_csv)
+
+    section_title("What this app demonstrates")
+    html_card(
+        "Portfolio Skills Shown",
+        "<ul><li>Modular Streamlit architecture</li><li>AI-enhanced interview prep with rules-based fallback</li><li>Responsible AI workflow design</li><li>Resume and job description text parsing</li><li>Rules-based review organization</li><li>User-friendly PDF and CSV exports</li></ul>",
+        "signal-card",
+    )
+
+    st.markdown(f'<div class="note-box">{PRIVACY_NOTE}</div>', unsafe_allow_html=True)
+
+
+if __name__ == "__main__":
+    main()
