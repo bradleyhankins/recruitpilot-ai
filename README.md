@@ -30,11 +30,13 @@ recruitpilot-ai/
 ├── pdf_helpers.py
 ├── requirements.txt
 ├── core/
+│   ├── __init__.py
 │   ├── file_parsers.py
 │   ├── prompts.py
 │   ├── report_builder.py
 │   └── review_logic.py
 ├── data/
+│   ├── __init__.py
 │   └── sample_data.py
 └── tests/
     ├── test_file_parsers.py
@@ -225,3 +227,5 @@ RecruitPilot AI helps small and mid-sized businesses organize applicant review m
 
 Bradley Hankins  
 Operations & Revenue Leader | AI Workflow Automation | RevOps & Process Improvement
+
+<!-- CI rerun marker: test expectation fixed -->
