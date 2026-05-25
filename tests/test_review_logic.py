@@ -36,7 +36,7 @@ def test_next_human_review_step_for_needs_more_information():
     assert next_human_review_step(review) == "Request clarification or additional resume detail before scheduling next steps."
 
 
-def test_followup_questions_are_limited_and_include_missing_term():
+def test_followup_questions_are_limited_and_include_missing_term_and_signal():
     questions = followup_questions(
         "Field Sales Consultant",
         signals=["crm"],
@@ -46,6 +46,7 @@ def test_followup_questions_are_limited_and_include_missing_term():
     assert questions
     assert len(questions) <= 8
     assert any("prospecting" in question.lower() for question in questions)
+    assert any("crm" in question.lower() for question in questions)
 
 
 def test_run_review_workflow_returns_expected_keys():
