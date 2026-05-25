@@ -72,10 +72,10 @@ def followup_questions(role_title: str, signals: list[str], missing_terms: list[
         "What type of work environment helps you perform at your best?",
         "How do you stay organized with tasks, notes, and follow-up?",
     ]
-    for term in missing_terms[:4]:
-        questions.append(f"Can you share any experience related to {term} that may not be clear on your resume?")
     if signals:
         questions.append(f"Your resume mentions {signals[0]}. Can you give a specific example of how you used that in a previous role?")
+    for term in missing_terms[:4]:
+        questions.append(f"Can you share any experience related to {term} that may not be clear on your resume?")
     return questions[:8]
 
 
