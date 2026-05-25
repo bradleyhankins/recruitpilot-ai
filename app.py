@@ -1,6 +1,7 @@
 import streamlit as st
 
 from ai_helpers import enhance_text, stable_cache_key
+from core.file_parsers import extract_resume_text
 from core.prompts import build_ai_review_prompt, parse_ai_review
 from core.report_builder import build_review_packet, build_tracker_csv
 from core.review_logic import limit_text, run_review_workflow
@@ -73,22 +74,26 @@ def html_list(items: list[str], empty_message: str) -> str:
     return "<ul>" + "".join(f"<li>{item}</li>" for item in visible_items) + "</ul>"
 
 
-def decode_uploaded_text(uploaded_file) -> str:
+def decode_uploaded_resume(uploaded_file) -> str:
     if uploaded_file is None:
         return ""
     if uploaded_file.size > MAX_UPLOAD_BYTES:
-        st.error(f"The uploaded file is too large. Please upload a plain-text resume under {MAX_UPLOAD_BYTES // 1000} KB.")
+        st.error(f"The uploaded resume is too large. Please upload a resume under {MAX_UPLOAD_BYTES // 1000} KB.")
         st.stop()
-    try:
-        return uploaded_file.getvalue().decode("utf-8")
-    except UnicodeDecodeError:
-        return uploaded_file.getvalue().decode("latin-1", errors="ignore")
+
+    file_bytes = uploaded_file.getvalue()
+    resume_text, warning = extract_resume_text(file_bytes, uploaded_file.name)
+    if warning:
+        st.warning(warning)
+    if resume_text.strip():
+        st.success(f"Resume text extracted from {uploaded_file.name}.")
+    return resume_text
 
 
 def render_sidebar() -> None:
     with st.sidebar:
         st.title("RecruitPilot AI")
-        st.caption("Version 2.6")
+        st.caption("Version 2.7")
         st.markdown("ATS Lite resume review assistant for organizing applicant information before human review.")
         st.divider()
         st.markdown("### Outputs")
@@ -108,11 +113,11 @@ def build_inputs() -> dict | None:
     scenario_name = st.selectbox("Load Sample Scenario", list(SAMPLE_DATA.keys()))
     scenario = SAMPLE_DATA.get(scenario_name, {})
     uploaded_resume = st.file_uploader(
-        "Optional: Upload resume text file (.txt or .md)",
-        type=["txt", "md"],
-        help=f"Plain text only. Max file size: {MAX_UPLOAD_BYTES // 1000} KB.",
+        "Optional: Upload resume file",
+        type=["pdf", "docx", "txt", "md"],
+        help=f"Preferred formats: PDF or DOCX. Plain text is also supported as fallback. Legacy .doc files are not supported. Max file size: {MAX_UPLOAD_BYTES // 1000} KB.",
     )
-    uploaded_resume_text = decode_uploaded_text(uploaded_resume)
+    uploaded_resume_text = decode_uploaded_resume(uploaded_resume)
 
     with st.form("resume_review_form"):
         form_group("Candidate and pipeline details")
@@ -244,12 +249,12 @@ def main() -> None:
     render_sidebar()
     render_hero()
 
-    section_title("Resume review builder", "Load a fictional sample, paste a job description and resume text, or upload a plain-text resume file. This tool supports human review and does not make employment decisions.")
+    section_title("Resume review builder", "Load a fictional sample, paste a job description and resume text, or upload a PDF/DOCX resume file. This tool supports human review and does not make employment decisions.")
     st.markdown(f'<div class="note-box">{PRIVACY_NOTE}</div>', unsafe_allow_html=True)
 
     inputs = build_inputs()
     if inputs is None:
-        st.markdown('<div class="note-box">Paste a job description and resume text, load a sample scenario, or upload a .txt/.md resume file, then generate the review packet.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="note-box">Paste a job description and resume text, load a sample scenario, or upload a PDF/DOCX resume file, then generate the review packet.</div>', unsafe_allow_html=True)
         return
 
     workflow = run_review_workflow(
@@ -286,7 +291,7 @@ def main() -> None:
     section_title("What this app demonstrates")
     html_card(
         "Portfolio Skills Shown",
-        "<ul><li>Modular Streamlit architecture</li><li>AI-enhanced interview prep with rules-based fallback</li><li>Responsible AI workflow design</li><li>Resume and job description text parsing</li><li>Rules-based review organization</li><li>User-friendly PDF and CSV exports</li></ul>",
+        "<ul><li>Modular Streamlit architecture</li><li>PDF and DOCX resume parsing</li><li>AI-enhanced interview prep with rules-based fallback</li><li>Responsible AI workflow design</li><li>Resume and job description text parsing</li><li>User-friendly PDF and CSV exports</li></ul>",
         "signal-card",
     )
 
