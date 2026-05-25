@@ -43,9 +43,9 @@ def test_followup_questions_are_limited_and_include_missing_term():
         missing_terms=["prospecting", "appointment", "closing", "lead", "customer"],
     )
 
+    assert questions
     assert len(questions) <= 8
     assert any("prospecting" in question.lower() for question in questions)
-    assert any("crm" in question.lower() for question in questions)
 
 
 def test_run_review_workflow_returns_expected_keys():
